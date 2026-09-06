@@ -1,0 +1,146 @@
+<resources>
+    <string name="app_name">Tuition Manager</string>
+
+    <!-- Navigation & Titles -->
+    <string name="title_students">Students</string>
+    <string name="title_add_student">Add Student</string>
+    <string name="title_edit_student">Edit Student</string>
+    <string name="title_student_profile">Student Profile</string>
+    <string name="title_student_diary">Student Diary</string>
+    <string name="title_new_diary_entry">New Diary Entry</string>
+    <string name="title_edit_diary_entry">Edit Diary Entry</string>
+    <string name="title_diary_details">Diary Details</string>
+    <string name="title_diary_history">Diary History</string>
+
+    <!-- Student List Screen -->
+    <string name="search_students_hint">Search by name, school, class, phone…</string>
+    <string name="filter_all">All</string>
+    <string name="filter_active">Active</string>
+    <string name="filter_inactive">Inactive</string>
+    <string name="sort_name_asc">Name (A–Z)</string>
+    <string name="sort_recent">Recently Added</string>
+    <string name="empty_students_title">No students found</string>
+    <string name="empty_students_desc">Tap the + button to add your first student and start tracking lessons, attendance, and progress.</string>
+    <string name="empty_students_search_desc">No students match your search criteria. Try a different query or reset filters.</string>
+
+    <!-- Student Form -->
+    <string name="section_basic_info">Basic Information</string>
+    <string name="label_student_name">Full Name *</string>
+    <string name="placeholder_student_name">e.g. Rafid Rahman</string>
+    <string name="label_institution">Institution / School / College</string>
+    <string name="placeholder_institution">e.g. Dhaka Residential Model College</string>
+    <string name="label_class_grade">Class / Grade</string>
+    <string name="placeholder_class_grade">e.g. Class 10 / Grade 10</string>
+    <string name="label_phone">Student Phone</string>
+    <string name="placeholder_phone">e.g. 01712345678</string>
+    <string name="label_address">Address / Location</string>
+    <string name="placeholder_address">e.g. Dhanmondi 27, Dhaka</string>
+
+    <string name="section_guardian_info">Guardian Information</string>
+    <string name="label_guardian_name">Guardian Name</string>
+    <string name="placeholder_guardian_name">e.g. Farhana Begum</string>
+    <string name="label_guardian_phone">Guardian Phone</string>
+    <string name="placeholder_guardian_phone">e.g. 01812345678</string>
+    <string name="label_guardian_channel">Preferred Communication</string>
+    <string name="label_enable_guardian_sharing">Enable Guardian Progress Sharing</string>
+    <string name="label_guardian_language">Report Language</string>
+
+    <string name="section_tuition_info">Tuition &amp; Fees</string>
+    <string name="label_monthly_fee">Monthly Fee Amount (BDT)</string>
+    <string name="placeholder_monthly_fee">e.g. 5000</string>
+    <string name="label_billing_day">Monthly Billing Cycle Day (1–31)</string>
+    <string name="placeholder_billing_day">e.g. 1st of each month</string>
+    <string name="label_initial_subjects">Subjects (comma separated)</string>
+    <string name="placeholder_initial_subjects">e.g. Higher Math, Physics, Chemistry</string>
+    <string name="label_is_active">Active Student</string>
+
+    <!-- Validation Errors -->
+    <string name="error_name_required">Student full name is required</string>
+    <string name="error_topic_required">Topic title is required</string>
+    <string name="error_taught_required">Lesson content (what was taught) is required</string>
+    <string name="error_student_required">Please select a student</string>
+    <string name="error_subject_required">Please select or enter a subject</string>
+
+    <!-- Student Profile Screen -->
+    <string name="tab_overview">Overview</string>
+    <string name="tab_schedule">Schedule</string>
+    <string name="tab_classes">Classes</string>
+    <string name="tab_diary">Diary</string>
+    <string name="tab_exams">Exams</string>
+    <string name="tab_payments">Payments</string>
+    <string name="tab_progress">Progress</string>
+    <string name="tab_notes">Notes</string>
+
+    <!-- Profile Overview Stats -->
+    <string name="stat_total_classes">Total Classes</string>
+    <string name="stat_completed">Completed</string>
+    <string name="stat_missed">Missed</string>
+    <string name="stat_diary_entries">Diary Entries</string>
+    <string name="stat_exams_taken">Exams</string>
+    <string name="stat_avg_score">Avg Score</string>
+    <string name="quick_add_diary">Add Diary Entry</string>
+    <string name="quick_call_student">Call Student</string>
+    <string name="quick_call_guardian">Call Guardian</string>
+    <string name="quick_message">Message</string>
+
+    <!-- Student Diary Screen -->
+    <string name="search_diary_hint">Search topic, lesson content, homework…</string>
+    <string name="filter_all_subjects">All Subjects</string>
+    <string name="filter_any_date">All Time</string>
+    <string name="empty_diary_title">No diary entries found</string>
+    <string name="empty_diary_desc">Record topics taught, homework assigned, and student comprehension after each lesson.</string>
+    <string name="empty_diary_search_desc">No entries match this filter criteria. Try clearing search or choosing another subject.</string>
+
+    <!-- Diary Entry Form -->
+    <string name="label_diary_date">Lesson Date</string>
+    <string name="label_select_student">Select Student *</string>
+    <string name="label_select_subject">Subject *</string>
+    <string name="label_topic_title">Topic / Chapter Title *</string>
+    <string name="placeholder_topic_title">e.g. Quadratic Equations &amp; Polynomials</string>
+    <string name="label_what_was_taught">What Was Taught (Lesson Summary) *</string>
+    <string name="placeholder_what_was_taught">Detailed summary of concepts covered, solved examples, formula derivations…</string>
+    <string name="label_homework_assigned">Homework Assigned</string>
+    <string name="placeholder_homework_assigned">e.g. Exercise 3.2: Problems 4 to 12</string>
+    <string name="label_homework_status">Homework Status</string>
+    <string name="label_practice_given">Practice / In-Class Exercises</string>
+    <string name="placeholder_practice_given">e.g. Board questions 2022-2023 solved on whiteboard</string>
+    <string name="label_student_understanding">Student Understanding</string>
+    <string name="label_teacher_remarks">Teacher Remarks &amp; Observations</string>
+    <string name="placeholder_teacher_remarks">e.g. Struggled with sign inversion in problem 7, needs extra revision</string>
+    <string name="label_next_class_plan">Next Class Plan</string>
+    <string name="placeholder_next_class_plan">e.g. Complete chapter review and conduct a 20-min speed test</string>
+
+    <!-- Understanding & Homework Enums -->
+    <string name="hw_none">None</string>
+    <string name="hw_assigned">Assigned</string>
+    <string name="hw_submitted_complete">Submitted (Complete)</string>
+    <string name="hw_submitted_partial">Submitted (Partial)</string>
+    <string name="hw_not_submitted">Not Submitted</string>
+
+    <string name="understanding_excellent">Excellent</string>
+    <string name="understanding_good">Good</string>
+    <string name="understanding_average">Average</string>
+    <string name="understanding_needs_attention">Needs Attention</string>
+
+    <!-- Common Actions & Buttons -->
+    <string name="action_save">Save</string>
+    <string name="action_saving">Saving…</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_restore">Restore</string>
+    <string name="action_deactivate">Deactivate</string>
+    <string name="action_activate">Activate</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_back">Back</string>
+    <string name="action_filter">Filter</string>
+    <string name="action_view_all">View All</string>
+    <string name="action_add_subject">Add Subject</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_delete_student_title">Delete Student?</string>
+    <string name="dialog_delete_student_message">Are you sure you want to move this student to deleted items? Their records will be retained in soft-deleted state.</string>
+    <string name="dialog_deactivate_student_title">Deactivate Student?</string>
+    <string name="dialog_deactivate_student_message">This student will be marked inactive. Their upcoming scheduled sessions will be paused.</string>
+    <string name="dialog_delete_diary_title">Delete Diary Entry?</string>
+    <string name="dialog_delete_diary_message">Are you sure you want to delete this diary entry?</string>
+</resources>

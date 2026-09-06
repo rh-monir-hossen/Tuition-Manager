@@ -16,6 +16,7 @@ import { ConflictSimulator } from './components/ConflictSimulator';
 import { EntityInspectorModal } from './components/EntityInspectorModal';
 import { PhaseInspectorModal } from './components/PhaseInspectorModal';
 import { SheetsViewerModal } from './components/SheetsViewerModal';
+import { AndroidStep4Preview } from './components/AndroidStep4Preview';
 import {
   Layers,
   Database,
@@ -31,6 +32,7 @@ import {
   Cpu,
   ShieldCheck,
   ChevronRight,
+  Smartphone,
 } from 'lucide-react';
 
 export default function App() {
@@ -38,6 +40,7 @@ export default function App() {
   const [selectedPhase, setSelectedPhase] = useState<DevelopmentPhase | null>(null);
   const [isSheetsModalOpen, setIsSheetsModalOpen] = useState(false);
   const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
+  const [activeViewMode, setActiveViewMode] = useState<'ARCHITECTURE' | 'APP_PREVIEW'>('APP_PREVIEW');
   const [entityCategoryFilter, setEntityCategoryFilter] = useState<string>('ALL');
   const [entitySearch, setEntitySearch] = useState<string>('');
 
@@ -73,14 +76,32 @@ export default function App() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2 text-xs">
-          <div className="px-2.5 py-1 bg-slate-900 border border-slate-700/80 rounded text-[11px] flex items-center gap-1.5 shadow-sm">
-            <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]"></div>
-            <span className="text-slate-300">System: Clean Architecture + MVVM</span>
+          {/* Mode Switcher */}
+          <div className="bg-slate-900 p-0.5 border border-slate-700/90 rounded flex items-center gap-1 shadow-sm">
+            <button
+              onClick={() => setActiveViewMode('APP_PREVIEW')}
+              className={`px-2.5 py-1 rounded text-[11px] font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
+                activeViewMode === 'APP_PREVIEW'
+                  ? 'bg-emerald-600 text-white'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Smartphone className="w-3.5 h-3.5" />
+              <span>Live Android UI (Step 4)</span>
+            </button>
+            <button
+              onClick={() => setActiveViewMode('ARCHITECTURE')}
+              className={`px-2.5 py-1 rounded text-[11px] font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
+                activeViewMode === 'ARCHITECTURE'
+                  ? 'bg-emerald-600 text-white'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Layers className="w-3.5 h-3.5" />
+              <span>Architecture Console</span>
+            </button>
           </div>
-          <div className="px-2.5 py-1 bg-slate-900 border border-slate-700/80 rounded text-[11px] flex items-center gap-1.5 shadow-sm">
-            <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-            <span className="text-slate-300">Storage: Room Database (15 Entities)</span>
-          </div>
+
           <button
             id="btn-open-sheets-schema"
             onClick={() => setIsSheetsModalOpen(true)}
@@ -104,8 +125,14 @@ export default function App() {
         </div>
       </header>
 
-      {/* Main High-Density Grid */}
-      <main className="grid grid-cols-1 lg:grid-cols-12 lg:grid-rows-12 gap-3 flex-grow overflow-hidden">
+      {/* Main Viewport Content */}
+      {activeViewMode === 'APP_PREVIEW' ? (
+        <div className="flex-1 overflow-y-auto lg:overflow-hidden p-1 custom-scrollbar">
+          <AndroidStep4Preview />
+        </div>
+      ) : (
+        /* Main High-Density Grid */
+        <main className="grid grid-cols-1 lg:grid-cols-12 lg:grid-rows-12 gap-3 flex-grow overflow-hidden">
         {/* Left Column: Core Architecture & Folder Structure (Col 1-3, Row 1-8) */}
         <section className="lg:col-span-3 lg:row-span-8 bg-slate-900/50 border border-slate-800 rounded-lg p-3 flex flex-col overflow-hidden shadow-sm">
           <div className="flex justify-between items-center border-b border-slate-800 pb-1.5 mb-2">
@@ -444,6 +471,7 @@ export default function App() {
           </div>
         </section>
       </main>
+      )}
 
       {/* High-Density Footer */}
       <footer className="mt-2.5 flex flex-col sm:flex-row justify-between items-center text-[10px] text-slate-500 border-t border-slate-900 pt-2 font-mono shrink-0 gap-1">

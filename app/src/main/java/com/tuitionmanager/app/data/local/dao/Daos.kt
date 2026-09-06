@@ -21,8 +21,17 @@ interface StudentDao {
     @Query("SELECT * FROM students WHERE isDeleted = 0 ORDER BY name ASC")
     fun observeActiveStudents(): Flow<List<StudentEntity>>
 
+    @Query("SELECT * FROM students WHERE isDeleted = 0 ORDER BY createdAt DESC")
+    fun observeRecentStudents(): Flow<List<StudentEntity>>
+
+    @Query("SELECT * FROM students ORDER BY isDeleted ASC, name ASC")
+    fun observeAllStudents(): Flow<List<StudentEntity>>
+
     @Query("SELECT * FROM students WHERE id = :id AND isDeleted = 0")
     suspend fun getStudentById(id: String): StudentEntity?
+
+    @Query("SELECT * FROM students WHERE id = :id")
+    suspend fun getStudentByIdIncludingDeleted(id: String): StudentEntity?
 
     @Query("SELECT * FROM students WHERE id = :id AND isDeleted = 0")
     fun observeStudentById(id: String): Flow<StudentEntity?>
@@ -36,6 +45,12 @@ interface StudentDao {
     @Query("UPDATE students SET isDeleted = 1, deletedAt = :deletedAt, updatedAt = :deletedAt WHERE id = :id")
     suspend fun softDelete(id: String, deletedAt: Long)
 
+    @Query("UPDATE students SET isDeleted = 0, deletedAt = NULL, updatedAt = :updatedAt WHERE id = :id")
+    suspend fun restore(id: String, updatedAt: Long)
+
+    @Query("UPDATE students SET isActive = :isActive, updatedAt = :updatedAt WHERE id = :id")
+    suspend fun updateActiveStatus(id: String, isActive: Boolean, updatedAt: Long)
+
     @Query("SELECT * FROM students WHERE updatedAt > :sinceEpochMs")
     suspend fun getStudentsModifiedSince(sinceEpochMs: Long): List<StudentEntity>
 }
@@ -44,6 +59,12 @@ interface StudentDao {
 interface StudentSubjectDao {
     @Query("SELECT * FROM student_subjects WHERE studentId = :studentId AND isDeleted = 0 ORDER BY subjectName ASC")
     fun observeSubjectsForStudent(studentId: String): Flow<List<StudentSubjectEntity>>
+
+    @Query("SELECT * FROM student_subjects WHERE studentId = :studentId AND isDeleted = 0 ORDER BY subjectName ASC")
+    suspend fun getSubjectsForStudent(studentId: String): List<StudentSubjectEntity>
+
+    @Query("SELECT * FROM student_subjects WHERE isDeleted = 0 ORDER BY subjectName ASC")
+    fun observeAllSubjects(): Flow<List<StudentSubjectEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(subject: StudentSubjectEntity)
@@ -129,6 +150,19 @@ interface StudentDiaryDao {
 
     @Query("""
         SELECT * FROM student_diaries 
+        WHERE isDeleted = 0 
+        ORDER BY date DESC, createdAt DESC
+    """)
+    fun observeAllDiaryHistory(): Flow<List<StudentDiaryEntity>>
+
+    @Query("SELECT * FROM student_diaries WHERE id = :id AND isDeleted = 0")
+    suspend fun getDiaryById(id: String): StudentDiaryEntity?
+
+    @Query("SELECT * FROM student_diaries WHERE id = :id AND isDeleted = 0")
+    fun observeDiaryById(id: String): Flow<StudentDiaryEntity?>
+
+    @Query("""
+        SELECT * FROM student_diaries 
         WHERE studentId = :studentId 
           AND (:subjectId IS NULL OR subjectId = :subjectId)
           AND date >= :startDateEpochMs 
@@ -145,6 +179,22 @@ interface StudentDiaryDao {
 
     @Query("""
         SELECT * FROM student_diaries 
+        WHERE (:studentId IS NULL OR studentId = :studentId)
+          AND (:subjectId IS NULL OR subjectId = :subjectId)
+          AND date >= :startDateEpochMs 
+          AND date <= :endDateEpochMs 
+          AND isDeleted = 0
+        ORDER BY date DESC
+    """)
+    fun filterAllDiaryEntries(
+        studentId: String?,
+        subjectId: String?,
+        startDateEpochMs: Long,
+        endDateEpochMs: Long
+    ): Flow<List<StudentDiaryEntity>>
+
+    @Query("""
+        SELECT * FROM student_diaries 
         WHERE studentId = :studentId 
           AND isDeleted = 0
           AND (topicTitle LIKE '%' || :query || '%' 
@@ -153,6 +203,17 @@ interface StudentDiaryDao {
         ORDER BY date DESC
     """)
     fun searchDiaryEntries(studentId: String, query: String): Flow<List<StudentDiaryEntity>>
+
+    @Query("""
+        SELECT * FROM student_diaries 
+        WHERE (:studentId IS NULL OR studentId = :studentId)
+          AND isDeleted = 0
+          AND (topicTitle LIKE '%' || :query || '%' 
+               OR whatWasTaught LIKE '%' || :query || '%' 
+               OR homeworkAssigned LIKE '%' || :query || '%')
+        ORDER BY date DESC
+    """)
+    fun searchAllDiaryEntries(studentId: String?, query: String): Flow<List<StudentDiaryEntity>>
 
     @Query("SELECT * FROM student_diaries WHERE classSessionId = :sessionId AND isDeleted = 0")
     suspend fun getDiaryEntriesForSession(sessionId: String): List<StudentDiaryEntity>

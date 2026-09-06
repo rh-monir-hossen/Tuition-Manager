@@ -1,0 +1,146 @@
+<resources>
+    <string name="app_name">টিউশন ম্যানেজার</string>
+
+    <!-- Navigation & Titles -->
+    <string name="title_students">শিক্ষার্থী তালিকা</string>
+    <string name="title_add_student">নতুন শিক্ষার্থী যুক্ত করুন</string>
+    <string name="title_edit_student">শিক্ষার্থী তথ্য সম্পাদনা</string>
+    <string name="title_student_profile">শিক্ষার্থী প্রোফাইল</string>
+    <string name="title_student_diary">শিক্ষার্থী ডায়েরি</string>
+    <string name="title_new_diary_entry">নতুন ডায়েরি এন্ট্রি</string>
+    <string name="title_edit_diary_entry">ডায়েরি সম্পাদনা</string>
+    <string name="title_diary_details">ডায়েরি বিবরণ</string>
+    <string name="title_diary_history">ডায়েরি ইতিহাস</string>
+
+    <!-- Student List Screen -->
+    <string name="search_students_hint">নাম, প্রতিষ্ঠান, শ্রেণি বা ফোন দিয়ে খুঁজুন…</string>
+    <string name="filter_all">সকল</string>
+    <string name="filter_active">সক্রিয়</string>
+    <string name="filter_inactive">নিষ্ক্রিয়</string>
+    <string name="sort_name_asc">নাম অনুযায়ী (A–Z)</string>
+    <string name="sort_recent">সম্প্রতি যুক্ত</string>
+    <string name="empty_students_title">কোনো শিক্ষার্থী পাওয়া যায়নি</string>
+    <string name="empty_students_desc">+ বাটনে ট্যাপ করে নতুন শিক্ষার্থী যুক্ত করুন এবং ক্লাস ও অগ্রগতির হিসাব রাখুন।</string>
+    <string name="empty_students_search_desc">আপনার অনুসন্ধানের সাথে কোনো শিক্ষার্থী মেলেনি। ভিন্ন শব্দ দিয়ে চেষ্টা করুন।</string>
+
+    <!-- Student Form -->
+    <string name="section_basic_info">প্রাথমিক তথ্য</string>
+    <string name="label_student_name">পূর্ণ নাম *</string>
+    <string name="placeholder_student_name">যেমন: রাফিদ রহমান</string>
+    <string name="label_institution">শিক্ষা প্রতিষ্ঠান</string>
+    <string name="placeholder_institution">যেমন: ঢাকা রেসিডেনসিয়াল মডেল কলেজ</string>
+    <string name="label_class_grade">শ্রেণি / গ্রেড</string>
+    <string name="placeholder_class_grade">যেমন: দশম শ্রেণি</string>
+    <string name="label_phone">শিক্ষার্থীর ফোন নম্বর</string>
+    <string name="placeholder_phone">যেমন: ০১৭১২৩৪৫৬৭৮</string>
+    <string name="label_address">ঠিকানা</string>
+    <string name="placeholder_address">যেমন: ধানমন্ডি ২৭, ঢাকা</string>
+
+    <string name="section_guardian_info">অভিভাবকের তথ্য</string>
+    <string name="label_guardian_name">অভিভাবকের নাম</string>
+    <string name="placeholder_guardian_name">যেমন: ফারহানা বেগম</string>
+    <string name="label_guardian_phone">অভিভাবকের ফোন নম্বর</string>
+    <string name="placeholder_guardian_phone">যেমন: ০১৮১২৩৪৫৬৭৮</string>
+    <string name="label_guardian_channel">পছন্দের যোগাযোগ মাধ্যম</string>
+    <string name="label_enable_guardian_sharing">অভিভাবকের সাথে অগ্রগতি শেয়ার সক্ষম করুন</string>
+    <string name="label_guardian_language">রিপোর্টের ভাষা</string>
+
+    <string name="section_tuition_info">টিউশন ও ফি</string>
+    <string name="label_monthly_fee">মাসিক ফি (টাকা)</string>
+    <string name="placeholder_monthly_fee">যেমন: ৫০০০</string>
+    <string name="label_billing_day">বিলিং সাইকেল দিবস (১–৩১)</string>
+    <string name="placeholder_billing_day">যেমন: প্রতি মাসের ১ তারিখ</string>
+    <string name="label_initial_subjects">বিষয়সমূহ (কমা দিয়ে লিখুন)</string>
+    <string name="placeholder_initial_subjects">যেমন: উচ্চতর গণিত, পদার্থবিজ্ঞান, রসায়ন</string>
+    <string name="label_is_active">সক্রিয় শিক্ষার্থী</string>
+
+    <!-- Validation Errors -->
+    <string name="error_name_required">শিক্ষার্থীর পূর্ণ নাম আবশ্যক</string>
+    <string name="error_topic_required">টপিকের নাম আবশ্যক</string>
+    <string name="error_taught_required">কী পড়ানো হয়েছে তা লেখা আবশ্যক</string>
+    <string name="error_student_required">অনুগ্রহ করে শিক্ষার্থী নির্বাচন করুন</string>
+    <string name="error_subject_required">অনুগ্রহ করে বিষয় নির্বাচন করুন</string>
+
+    <!-- Student Profile Screen -->
+    <string name="tab_overview">একনজরে</string>
+    <string name="tab_schedule">রুটিন</string>
+    <string name="tab_classes">ক্লাসসমূহ</string>
+    <string name="tab_diary">ডায়েরি</string>
+    <string name="tab_exams">পরীক্ষা</string>
+    <string name="tab_payments">পেমেন্ট</string>
+    <string name="tab_progress">অগ্রগতি</string>
+    <string name="tab_notes">নোট</string>
+
+    <!-- Profile Overview Stats -->
+    <string name="stat_total_classes">মোট ক্লাস</string>
+    <string name="stat_completed">সম্পন্ন</string>
+    <string name="stat_missed">মিসড ক্লাস</string>
+    <string name="stat_diary_entries">ডায়েরি এন্ট্রি</string>
+    <string name="stat_exams_taken">পরীক্ষা</string>
+    <string name="stat_avg_score">গড় স্কোর</string>
+    <string name="quick_add_diary">ডায়েরি লিখুন</string>
+    <string name="quick_call_student">শিক্ষার্থীকে কল করুন</string>
+    <string name="quick_call_guardian">অভিভাবককে কল করুন</string>
+    <string name="quick_message">মেসেজ পাঠান</string>
+
+    <!-- Student Diary Screen -->
+    <string name="search_diary_hint">টপিক, পাঠের বিবরণ বা হোমওয়ার্ক খুঁজুন…</string>
+    <string name="filter_all_subjects">সকল বিষয়</string>
+    <string name="filter_any_date">সব সময়</string>
+    <string name="empty_diary_title">কোনো ডায়েরি এন্ট্রি পাওয়া যায়নি</string>
+    <string name="empty_diary_desc">ক্লাস শেষে কী পড়িয়েছেন, কী হোমওয়ার্ক দিয়েছেন এবং শিক্ষার্থীর বোঝাপড়ার মাত্রা লিপিবদ্ধ করুন।</string>
+    <string name="empty_diary_search_desc">এই ফিল্টারের সাথে কোনো এন্ট্রি মেলেনি। ফিল্টার পরিবর্তন করে পুনরায় চেষ্টা করুন।</string>
+
+    <!-- Diary Entry Form -->
+    <string name="label_diary_date">ক্লাসের তারিখ</string>
+    <string name="label_select_student">শিক্ষার্থী নির্বাচন *</string>
+    <string name="label_select_subject">বিষয় *</string>
+    <string name="label_topic_title">টপিক / অধ্যায়ের নাম *</string>
+    <string name="placeholder_topic_title">যেমন: বহুপদী ও বহুপদী সমীকরণ</string>
+    <string name="label_what_was_taught">কী পড়ানো হয়েছে *</string>
+    <string name="placeholder_what_was_taught">ধারণাসমূহ, সমাধানকৃত উদাহরণ, সূত্র ইত্যাদি বিস্তারিত লিখুন…</string>
+    <string name="label_homework_assigned">হোমওয়ার্ক</string>
+    <string name="placeholder_homework_assigned">যেমন: অনুশীলন ৩.২ এর ৪ থেকে ১২ নম্বর অঙ্ক</string>
+    <string name="label_homework_status">হোমওয়ার্কের অবস্থা</string>
+    <string name="label_practice_given">ক্লাসে প্র্যাকটিস / অনুশীলন</string>
+    <string name="placeholder_practice_given">যেমন: বোর্ডের বিগত ২ বছরের প্রশ্ন বোর্ডে সমাধান করানো হয়েছে</string>
+    <string name="label_student_understanding">বোঝার মাত্রা</string>
+    <string name="label_teacher_remarks">শিক্ষকের মন্তব্য ও পর্যবেক্ষণ</string>
+    <string name="placeholder_teacher_remarks">যেমন: ৭ নম্বর অঙ্কে চিহ্ন পরিবর্তনে বিভ্রান্ত হয়েছে, পুনরাবৃত্তি প্রয়োজন</string>
+    <string name="label_next_class_plan">পরবর্তী ক্লাসের পরিকল্পনা</string>
+    <string name="placeholder_next_class_plan">যেমন: অধ্যায় রিভিশন ও ২০ মিনিটের ক্লাস টেস্ট</string>
+
+    <!-- Understanding & Homework Enums -->
+    <string name="hw_none">নেই</string>
+    <string name="hw_assigned">দেওয়া হয়েছে</string>
+    <string name="hw_submitted_complete">জমা দিয়েছে (সম্পূর্ণ)</string>
+    <string name="hw_submitted_partial">জমা দিয়েছে (আংশিক)</string>
+    <string name="hw_not_submitted">জমা দেয়নি</string>
+
+    <string name="understanding_excellent">অসাধারণ</string>
+    <string name="understanding_good">ভালো</string>
+    <string name="understanding_average">মোটামুটি</string>
+    <string name="understanding_needs_attention">মনোযোগ দরকার</string>
+
+    <!-- Common Actions & Buttons -->
+    <string name="action_save">সংরক্ষণ করুন</string>
+    <string name="action_saving">সংরক্ষণ হচ্ছে…</string>
+    <string name="action_cancel">বাতিল</string>
+    <string name="action_delete">মুছুন</string>
+    <string name="action_restore">পুনরুদ্ধার</string>
+    <string name="action_deactivate">নিষ্ক্রিয় করুন</string>
+    <string name="action_activate">সক্রিয় করুন</string>
+    <string name="action_edit">সম্পাদনা</string>
+    <string name="action_back">ফিরে যান</string>
+    <string name="action_filter">ফিল্টার</string>
+    <string name="action_view_all">সব দেখুন</string>
+    <string name="action_add_subject">বিষয় যুক্ত করুন</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_delete_student_title">শিক্ষার্থী মুছে ফেলবেন?</string>
+    <string name="dialog_delete_student_message">আপনি কি নিশ্চিত যে এই শিক্ষার্থীকে মুছে ফেলা তালিকায় স্থানান্তর করতে চান? রেকর্ডটি সংরক্ষিত থাকবে।</string>
+    <string name="dialog_deactivate_student_title">শিক্ষার্থী নিষ্ক্রিয় করবেন?</string>
+    <string name="dialog_deactivate_student_message">এই শিক্ষার্থীকে নিষ্ক্রিয় করা হবে। ভবিষ্যতের নির্ধারিত ক্লাসগুলো স্থগিত থাকবে।</string>
+    <string name="dialog_delete_diary_title">ডায়েরি এন্ট্রি মুছে ফেলবেন?</string>
+    <string name="dialog_delete_diary_message">আপনি কি নিশ্চিত যে এই ডায়েরি এন্ট্রি মুছে ফেলতে চান?</string>
+</resources>

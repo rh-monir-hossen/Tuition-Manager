@@ -33,6 +33,15 @@ data class StudentSubject(
     val deletedAt: Long? = null
 )
 
+data class StudentStats(
+    val totalClasses: Int = 0,
+    val completedClasses: Int = 0,
+    val missedClasses: Int = 0,
+    val diaryEntriesCount: Int = 0,
+    val examsCompletedCount: Int = 0,
+    val averageExamPercentage: Double? = null
+)
+
 data class Schedule(
     val id: String,
     val studentId: String,

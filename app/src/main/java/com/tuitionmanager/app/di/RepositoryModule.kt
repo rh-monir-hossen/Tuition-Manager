@@ -20,6 +20,12 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
+    abstract fun bindStudentSubjectRepository(
+        impl: StudentSubjectRepositoryImpl
+    ): StudentSubjectRepository
+
+    @Binds
+    @Singleton
     abstract fun bindStudentDiaryRepository(
         impl: StudentDiaryRepositoryImpl
     ): StudentDiaryRepository

@@ -18,6 +18,14 @@ class StudentRepositoryImpl @Inject constructor(
         return studentDao.observeActiveStudents().map { list -> list.map { it.toDomain() } }
     }
 
+    override fun observeRecentStudents(): Flow<List<Student>> {
+        return studentDao.observeRecentStudents().map { list -> list.map { it.toDomain() } }
+    }
+
+    override fun observeAllStudents(): Flow<List<Student>> {
+        return studentDao.observeAllStudents().map { list -> list.map { it.toDomain() } }
+    }
+
     override suspend fun getStudentById(id: String): Student? {
         return studentDao.getStudentById(id)?.toDomain()
     }
@@ -37,6 +45,44 @@ class StudentRepositoryImpl @Inject constructor(
     override suspend fun deleteStudent(id: String) {
         studentDao.softDelete(id, System.currentTimeMillis())
     }
+
+    override suspend fun restoreStudent(id: String) {
+        studentDao.restore(id, System.currentTimeMillis())
+    }
+
+    override suspend fun updateActiveStatus(id: String, isActive: Boolean) {
+        studentDao.updateActiveStatus(id, isActive, System.currentTimeMillis())
+    }
+}
+
+@Singleton
+class StudentSubjectRepositoryImpl @Inject constructor(
+    private val subjectDao: StudentSubjectDao
+) : StudentSubjectRepository {
+
+    override fun observeSubjectsForStudent(studentId: String): Flow<List<StudentSubject>> {
+        return subjectDao.observeSubjectsForStudent(studentId).map { list -> list.map { it.toDomain() } }
+    }
+
+    override suspend fun getSubjectsForStudent(studentId: String): List<StudentSubject> {
+        return subjectDao.getSubjectsForStudent(studentId).map { it.toDomain() }
+    }
+
+    override fun observeAllSubjects(): Flow<List<StudentSubject>> {
+        return subjectDao.observeAllSubjects().map { list -> list.map { it.toDomain() } }
+    }
+
+    override suspend fun addSubject(subject: StudentSubject) {
+        subjectDao.insert(subject.toEntity())
+    }
+
+    override suspend fun updateSubject(subject: StudentSubject) {
+        subjectDao.update(subject.toEntity())
+    }
+
+    override suspend fun deleteSubject(id: String) {
+        subjectDao.softDelete(id, System.currentTimeMillis())
+    }
 }
 
 @Singleton
@@ -49,6 +95,18 @@ class StudentDiaryRepositoryImpl @Inject constructor(
         return diaryDao.observeStudentDiaryHistory(studentId).map { list -> list.map { it.toDomain() } }
     }
 
+    override fun observeAllDiaryHistory(): Flow<List<StudentDiary>> {
+        return diaryDao.observeAllDiaryHistory().map { list -> list.map { it.toDomain() } }
+    }
+
+    override suspend fun getDiaryById(id: String): StudentDiary? {
+        return diaryDao.getDiaryById(id)?.toDomain()
+    }
+
+    override fun observeDiaryById(id: String): Flow<StudentDiary?> {
+        return diaryDao.observeDiaryById(id).map { it?.toDomain() }
+    }
+
     override fun filterDiaryEntries(
         studentId: String,
         subjectId: String?,
@@ -59,8 +117,22 @@ class StudentDiaryRepositoryImpl @Inject constructor(
             .map { list -> list.map { it.toDomain() } }
     }
 
+    override fun filterAllDiaryEntries(
+        studentId: String?,
+        subjectId: String?,
+        startDateEpochMs: Long,
+        endDateEpochMs: Long
+    ): Flow<List<StudentDiary>> {
+        return diaryDao.filterAllDiaryEntries(studentId, subjectId, startDateEpochMs, endDateEpochMs)
+            .map { list -> list.map { it.toDomain() } }
+    }
+
     override fun searchDiaryEntries(studentId: String, query: String): Flow<List<StudentDiary>> {
         return diaryDao.searchDiaryEntries(studentId, query).map { list -> list.map { it.toDomain() } }
+    }
+
+    override fun searchAllDiaryEntries(studentId: String?, query: String): Flow<List<StudentDiary>> {
+        return diaryDao.searchAllDiaryEntries(studentId, query).map { list -> list.map { it.toDomain() } }
     }
 
     override suspend fun getDiaryEntriesForSession(sessionId: String): List<StudentDiary> {
@@ -84,6 +156,10 @@ class StudentDiaryRepositoryImpl @Inject constructor(
 
     override suspend fun deleteDiaryEntry(id: String) {
         diaryDao.softDelete(id, System.currentTimeMillis())
+    }
+
+    override suspend fun restoreDiaryEntry(id: String) {
+        diaryDao.restore(id, System.currentTimeMillis())
     }
 }
 
@@ -191,6 +267,26 @@ fun Student.toEntity() = StudentEntity(
     isGuardianProgressSharingEnabled = isGuardianProgressSharingEnabled,
     guardianReportLanguage = guardianReportLanguage.name,
     guardianReportFormat = guardianReportFormat.name,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    isDeleted = isDeleted,
+    deletedAt = deletedAt
+)
+
+fun StudentSubjectEntity.toDomain() = StudentSubject(
+    id = id,
+    studentId = studentId,
+    subjectName = subjectName,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    isDeleted = isDeleted,
+    deletedAt = deletedAt
+)
+
+fun StudentSubject.toEntity() = StudentSubjectEntity(
+    id = id,
+    studentId = studentId,
+    subjectName = subjectName,
     createdAt = createdAt,
     updatedAt = updatedAt,
     isDeleted = isDeleted,

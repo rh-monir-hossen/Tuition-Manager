@@ -5,26 +5,50 @@ import kotlinx.coroutines.flow.Flow
 
 interface StudentRepository {
     fun observeActiveStudents(): Flow<List<Student>>
+    fun observeRecentStudents(): Flow<List<Student>>
+    fun observeAllStudents(): Flow<List<Student>>
     suspend fun getStudentById(id: String): Student?
     fun observeStudentById(id: String): Flow<Student?>
     suspend fun addStudent(student: Student)
     suspend fun updateStudent(student: Student)
     suspend fun deleteStudent(id: String)
+    suspend fun restoreStudent(id: String)
+    suspend fun updateActiveStatus(id: String, isActive: Boolean)
+}
+
+interface StudentSubjectRepository {
+    fun observeSubjectsForStudent(studentId: String): Flow<List<StudentSubject>>
+    suspend fun getSubjectsForStudent(studentId: String): List<StudentSubject>
+    fun observeAllSubjects(): Flow<List<StudentSubject>>
+    suspend fun addSubject(subject: StudentSubject)
+    suspend fun updateSubject(subject: StudentSubject)
+    suspend fun deleteSubject(id: String)
 }
 
 interface StudentDiaryRepository {
     fun observeDiaryHistory(studentId: String): Flow<List<StudentDiary>>
+    fun observeAllDiaryHistory(): Flow<List<StudentDiary>>
+    suspend fun getDiaryById(id: String): StudentDiary?
+    fun observeDiaryById(id: String): Flow<StudentDiary?>
     fun filterDiaryEntries(
         studentId: String,
         subjectId: String?,
         startDateEpochMs: Long,
         endDateEpochMs: Long
     ): Flow<List<StudentDiary>>
+    fun filterAllDiaryEntries(
+        studentId: String?,
+        subjectId: String?,
+        startDateEpochMs: Long,
+        endDateEpochMs: Long
+    ): Flow<List<StudentDiary>>
     fun searchDiaryEntries(studentId: String, query: String): Flow<List<StudentDiary>>
+    fun searchAllDiaryEntries(studentId: String?, query: String): Flow<List<StudentDiary>>
     suspend fun getDiaryEntriesForSession(sessionId: String): List<StudentDiary>
     suspend fun addDiaryEntry(entry: StudentDiary)
     suspend fun updateDiaryEntry(entry: StudentDiary)
     suspend fun deleteDiaryEntry(id: String)
+    suspend fun restoreDiaryEntry(id: String)
 }
 
 interface ExamRepository {
