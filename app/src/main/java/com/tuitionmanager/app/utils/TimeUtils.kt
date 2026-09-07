@@ -45,4 +45,41 @@ object TimeUtils {
         }
         return calendar.timeInMillis
     }
+
+    /**
+     * Normalized start of day (00:00:00.000) for a given epoch ms in local timezone.
+     */
+    fun getStartOfDayEpochMs(epochMs: Long): Long {
+        val cal = Calendar.getInstance().apply {
+            timeInMillis = epochMs
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        return cal.timeInMillis
+    }
+
+    fun getTodayStartOfDayEpochMs(): Long {
+        return getStartOfDayEpochMs(System.currentTimeMillis())
+    }
+
+    /**
+     * Returns 1 (Monday) to 7 (Sunday), matching ISO-8601 and ScheduleEntity.
+     */
+    fun getDayOfWeek(epochMs: Long): Int {
+        val cal = Calendar.getInstance().apply {
+            timeInMillis = epochMs
+        }
+        return when (cal.get(Calendar.DAY_OF_WEEK)) {
+            Calendar.MONDAY -> 1
+            Calendar.TUESDAY -> 2
+            Calendar.WEDNESDAY -> 3
+            Calendar.THURSDAY -> 4
+            Calendar.FRIDAY -> 5
+            Calendar.SATURDAY -> 6
+            Calendar.SUNDAY -> 7
+            else -> 1
+        }
+    }
 }

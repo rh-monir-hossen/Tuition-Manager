@@ -35,4 +35,22 @@ abstract class RepositoryModule {
     abstract fun bindExamRepository(
         impl: ExamRepositoryImpl
     ): ExamRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindScheduleRepository(
+        impl: ScheduleRepositoryImpl
+    ): ScheduleRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindClassSessionRepository(
+        impl: ClassSessionRepositoryImpl
+    ): ClassSessionRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindRescheduleRepository(
+        impl: RescheduleRepositoryImpl
+    ): RescheduleRepository
 }

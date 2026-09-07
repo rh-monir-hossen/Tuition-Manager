@@ -52,10 +52,56 @@ data class Schedule(
     val effectiveStartDate: Long,
     val effectiveEndDate: Long?,
     val isActive: Boolean,
+    val location: String? = null,
+    val notes: String? = null,
     val createdAt: Long,
     val updatedAt: Long,
     val isDeleted: Boolean = false,
     val deletedAt: Long? = null
+)
+
+data class RescheduleRecord(
+    val id: String,
+    val originalSessionId: String,
+    val newSessionId: String,
+    val rescheduledBy: String = "TUTOR",
+    val reason: String? = null,
+    val requestedAt: Long,
+    val createdAt: Long,
+    val updatedAt: Long,
+    val isDeleted: Boolean = false,
+    val deletedAt: Long? = null
+)
+
+data class ScheduleWithDetails(
+    val schedule: Schedule,
+    val studentName: String,
+    val studentPhone: String?,
+    val subjectName: String,
+    val dayOfWeek: Int,
+    val startTimeFormatted: String,
+    val endTimeFormatted: String
+)
+
+data class ClassSessionWithDetails(
+    val session: ClassSession,
+    val studentName: String,
+    val studentPhone: String?,
+    val subjectName: String,
+    val timeFormatted: String,
+    val dayFormatted: String,
+    val dateFormatted: String,
+    val hasDiaryEntry: Boolean = false,
+    val diaryEntryId: String? = null,
+    val rescheduleReason: String? = null
+)
+
+data class ScheduleConflictDetails(
+    val schedule: Schedule,
+    val studentName: String,
+    val subjectName: String,
+    val dayName: String,
+    val timeFormatted: String
 )
 
 data class ClassSession(

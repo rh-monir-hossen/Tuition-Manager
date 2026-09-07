@@ -143,4 +143,112 @@
     <string name="dialog_deactivate_student_message">এই শিক্ষার্থীকে নিষ্ক্রিয় করা হবে। ভবিষ্যতের নির্ধারিত ক্লাসগুলো স্থগিত থাকবে।</string>
     <string name="dialog_delete_diary_title">ডায়েরি এন্ট্রি মুছে ফেলবেন?</string>
     <string name="dialog_delete_diary_message">আপনি কি নিশ্চিত যে এই ডায়েরি এন্ট্রি মুছে ফেলতে চান?</string>
+
+    <!-- STEP 5: Schedule & Routine -->
+    <string name="title_weekly_routine">সাপ্তাহিক রুটিন</string>
+    <string name="subtitle_weekly_routine">সাপ্তাহিক পুনরাবৃত্তিমূলক সময়সূচি</string>
+    <string name="action_add_schedule">শিডিউল যোগ করুন</string>
+    <string name="title_add_schedule">নতুন শিডিউল স্লট</string>
+    <string name="title_edit_schedule">শিডিউল স্লট সম্পাদন</string>
+    <string name="label_select_student">শিক্ষার্থী *</string>
+    <string name="label_select_subject">বিষয় *</string>
+    <string name="label_day_of_week">বার / দিন *</string>
+    <string name="label_start_time">শুরুর সময় *</string>
+    <string name="label_end_time">শেষ সময় *</string>
+    <string name="label_location">স্থান / মাধ্যম</string>
+    <string name="placeholder_location">যেমন: শিক্ষার্থীর বাসায়, অনলাইন (জুম), শিক্ষকের কাছে</string>
+    <string name="label_schedule_notes">নোট / বিশেষ নির্দেশনা</string>
+    <string name="placeholder_schedule_notes">যেমন: ফিজিক্স টেস্ট পেপার আনতে হবে</string>
+    <string name="label_is_active_schedule">শিডিউলটি সক্রিয় আছে</string>
+    <string name="tab_all_week">পুরো সপ্তাহ</string>
+    <string name="empty_routine_title">এই দিনে কোনো শিডিউল নেই</string>
+    <string name="empty_routine_desc">নতুন শিডিউল স্লট যোগ করতে নিচের বাটনে চাপ দিন।</string>
+    <string name="dialog_delete_schedule_title">শিডিউল মুছে ফেলবেন?</string>
+    <string name="dialog_delete_schedule_message">আপনি কি নিশ্চিত যে এই পুনরাবৃত্তিমূলক শিডিউল স্লটটি মুছে ফেলতে চান? আগের ক্লাস রেকর্ড অক্ষুণ্ণ থাকবে।</string>
+
+    <!-- Days of Week -->
+    <string name="day_saturday">শনিবার</string>
+    <string name="day_sunday">রবিবার</string>
+    <string name="day_monday">সোমবার</string>
+    <string name="day_tuesday">মঙ্গলবার</string>
+    <string name="day_wednesday">বুধবার</string>
+    <string name="day_thursday">বৃহস্পতিবার</string>
+    <string name="day_friday">শুক্রবার</string>
+
+    <string name="day_sat_short">শনি</string>
+    <string name="day_sun_short">রবি</string>
+    <string name="day_mon_short">সোম</string>
+    <string name="day_tue_short">মঙ্গল</string>
+    <string name="day_wed_short">বুধ</string>
+    <string name="day_thu_short">বৃহ</string>
+    <string name="day_fri_short">শুক্র</string>
+
+    <!-- Schedule Conflict Alert -->
+    <string name="dialog_conflict_title">সময়ের সংঘাত শনাক্ত হয়েছে</string>
+    <string name="dialog_conflict_message">প্রস্তাবিত সময়টি ইতোমধ্যে বিদ্যমান একটি সক্রিয় শিডিউলের সাথে মিলে যাচ্ছে। একই সময়ে একাধিক ক্লাস অনুমোদনযোগ্য নয়।</string>
+    <string name="conflict_details_header">সংঘাতপূর্ণ শিডিউল:</string>
+    <string name="conflict_student_label">শিক্ষার্থী: %1$s</string>
+    <string name="conflict_subject_label">বিষয়: %1$s</string>
+    <string name="conflict_time_label">সময়: %1$s (%2$s)</string>
+
+    <!-- STEP 5: Daily Agenda & Class Sessions -->
+    <string name="title_daily_agenda">দৈনিক এজেন্ডা</string>
+    <string name="subtitle_daily_agenda">আজকের ক্লাসের তালিকা</string>
+    <string name="action_today">আজ</string>
+    <string name="action_previous_day">আগের দিন</string>
+    <string name="action_next_day">পরের দিন</string>
+    <string name="empty_agenda_title">কোনো ক্লাস নির্ধারিত নেই</string>
+    <string name="empty_agenda_desc">এই তারিখে কোনো ক্লাসের শিডিউল নেই। রুটিন থেকে তৈরি করুন অথবা নতুন ক্লাস যোগ করুন।</string>
+    <string name="action_generate_sessions">রুটিন থেকে ক্লাস আনুন</string>
+    <string name="title_class_session_details">ক্লাস সেশনের বিবরণ</string>
+    <string name="label_scheduled_time">নির্ধারিত সময়</string>
+    <string name="label_actual_time">প্রকৃত ক্লাসের সময়</string>
+    <string name="label_topic_summary">কী পড়ানো হয়েছে (সংক্ষেপে)</string>
+    <string name="placeholder_topic_summary">সংক্ষিপ্ত টপিক (যেমন: নিউটনের ২য় সূত্র ও ঘর্ষণ)</string>
+    <string name="label_session_remarks">ক্লাসের মন্তব্য / পর্যবেক্ষণ</string>
+    <string name="placeholder_session_remarks">ক্লাস সম্পর্কিত প্রয়োজনীয় মন্তব্য লিখুন</string>
+
+    <!-- Session Status Badges & Transitions -->
+    <string name="status_scheduled">নির্ধারিত</string>
+    <string name="status_completed">সম্পন্ন</string>
+    <string name="status_missed">উপস্থিত ছিল না</string>
+    <string name="status_cancelled">বাতিল</string>
+    <string name="status_rescheduled">সময় পুনর্নির্ধারিত</string>
+
+    <string name="action_mark_completed">সম্পন্ন চিহ্নিত করুন</string>
+    <string name="action_mark_missed">মিসড মার্ক করুন</string>
+    <string name="action_mark_cancelled">ক্লাস বাতিল করুন</string>
+    <string name="action_reschedule">সময় পরিবর্তন</string>
+    <string name="action_create_diary_entry">ডায়েরি লিখুন</string>
+    <string name="action_view_diary_entry">ডায়েরি দেখুন</string>
+    <string name="badge_has_diary">ডায়েরি সংরক্ষিত</string>
+    <string name="rescheduled_from_note">পুনর্নির্ধারিত স্লট</string>
+
+    <!-- Dialogs for Session Status -->
+    <string name="dialog_complete_session_title">ক্লাস সম্পন্ন করুন</string>
+    <string name="dialog_complete_session_message">ক্লাসটি সম্পন্ন হিসেবে চিহ্নিত করুন। আপনি কী পড়ানো হয়েছে তা নোট করতে পারেন এবং সরাসরি বিস্তারিত ডায়েরি এন্ট্রি তৈরি করতে পারেন।</string>
+    <string name="dialog_cancel_session_title">ক্লাস বাতিল করুন</string>
+    <string name="dialog_cancel_session_message">ক্লাস বাতিলের কারণ উল্লেখ করুন:</string>
+    <string name="label_cancellation_reason">বাতিলের কারণ</string>
+    <string name="placeholder_cancellation_reason">যেমন: শিক্ষার্থী অসুস্থ, পরীক্ষার বন্ধ</string>
+
+    <string name="dialog_missed_session_title">ক্লাস মিসড চিহ্নিত করুন</string>
+    <string name="dialog_missed_session_message">পূর্বঘোষণা ছাড়াই ক্লাস অনুষ্ঠিত হয়নি:</string>
+    <string name="label_missed_reason">মন্তব্য (ঐচ্ছিক)</string>
+
+    <!-- Reschedule Dialog -->
+    <string name="dialog_reschedule_title">ক্লাসের সময় পুনর্নির্ধারণ</string>
+    <string name="dialog_reschedule_message">নতুন তারিখ ও সময়ে ক্লাসটি স্থানান্তর করুন:</string>
+    <string name="label_new_date">নতুন তারিখ *</string>
+    <string name="label_new_start_time">নতুন শুরুর সময় *</string>
+    <string name="label_new_end_time">নতুন শেষ সময় *</string>
+    <string name="label_reschedule_reason">পুনর্নির্ধারণের কারণ</string>
+    <string name="placeholder_reschedule_reason">যেমন: স্কুলের খেলাধুলা, অভিভাবকের অনুরোধ</string>
+    <string name="action_confirm_reschedule">পুনর্নির্ধারণ নিশ্চিত করুন</string>
+
+    <!-- Student Profile Schedule & Classes Tab -->
+    <string name="student_schedule_empty">এই শিক্ষার্থীর কোনো নিয়মিত শিডিউল সেট করা নেই।</string>
+    <string name="student_classes_empty">এখনো কোনো ক্লাসের রেকর্ড নেই।</string>
+    <string name="filter_all">সকল</string>
 </resources>
+

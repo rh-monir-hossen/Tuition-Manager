@@ -72,19 +72,43 @@ interface ExamRepository {
 interface ClassSessionRepository {
     fun observeSessionsForStudent(studentId: String): Flow<List<ClassSession>>
     fun observeSessionsForDate(dateEpochMs: Long): Flow<List<ClassSession>>
+    fun observeAllSessions(): Flow<List<ClassSession>>
     suspend fun getSessionById(id: String): ClassSession?
+    fun observeSessionById(id: String): Flow<ClassSession?>
+    suspend fun getSessionsForScheduleAndDate(scheduleId: String, dateEpochMs: Long): List<ClassSession>
+    suspend fun getSessionsForDate(dateEpochMs: Long): List<ClassSession>
+    suspend fun getSessionsByStatus(status: SessionStatus): List<ClassSession>
     suspend fun addSession(session: ClassSession)
     suspend fun updateSession(session: ClassSession)
+    suspend fun updateStatus(
+        id: String,
+        status: SessionStatus,
+        remarks: String? = null,
+        actualStart: Int? = null,
+        actualEnd: Int? = null
+    )
     suspend fun updateTopicCovered(id: String, topic: String)
     suspend fun deleteSession(id: String)
 }
 
 interface ScheduleRepository {
+    fun observeAllActiveSchedules(): Flow<List<Schedule>>
+    fun observeSchedulesForDay(dayOfWeek: Int): Flow<List<Schedule>>
     fun observeSchedulesForStudent(studentId: String): Flow<List<Schedule>>
+    suspend fun getScheduleById(id: String): Schedule?
     suspend fun getAllActiveSchedules(): List<Schedule>
+    suspend fun getActiveSchedulesForDay(dayOfWeek: Int): List<Schedule>
     suspend fun addSchedule(schedule: Schedule)
     suspend fun updateSchedule(schedule: Schedule)
+    suspend fun updateActiveStatus(id: String, isActive: Boolean)
     suspend fun deleteSchedule(id: String)
+}
+
+interface RescheduleRepository {
+    suspend fun addRescheduleRecord(record: RescheduleRecord)
+    suspend fun getByOriginalSession(sessionId: String): RescheduleRecord?
+    fun observeByOriginalSession(sessionId: String): Flow<RescheduleRecord?>
+    suspend fun getByNewSession(sessionId: String): RescheduleRecord?
 }
 
 interface PaymentRepository {

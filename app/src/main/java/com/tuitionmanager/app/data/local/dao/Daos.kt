@@ -78,11 +78,23 @@ interface StudentSubjectDao {
 
 @Dao
 interface ScheduleDao {
-    @Query("SELECT * FROM schedules WHERE studentId = :studentId AND isDeleted = 0 AND isActive = 1")
+    @Query("SELECT * FROM schedules WHERE studentId = :studentId AND isDeleted = 0 AND isActive = 1 ORDER BY dayOfWeek ASC, startTimeMinutes ASC")
     fun observeSchedulesForStudent(studentId: String): Flow<List<ScheduleEntity>>
+
+    @Query("SELECT * FROM schedules WHERE isDeleted = 0 AND isActive = 1 ORDER BY dayOfWeek ASC, startTimeMinutes ASC")
+    fun observeAllActiveSchedules(): Flow<List<ScheduleEntity>>
+
+    @Query("SELECT * FROM schedules WHERE dayOfWeek = :dayOfWeek AND isDeleted = 0 AND isActive = 1 ORDER BY startTimeMinutes ASC")
+    fun observeSchedulesForDay(dayOfWeek: Int): Flow<List<ScheduleEntity>>
+
+    @Query("SELECT * FROM schedules WHERE id = :id AND isDeleted = 0")
+    suspend fun getScheduleById(id: String): ScheduleEntity?
 
     @Query("SELECT * FROM schedules WHERE isDeleted = 0 AND isActive = 1")
     suspend fun getAllActiveSchedules(): List<ScheduleEntity>
+
+    @Query("SELECT * FROM schedules WHERE dayOfWeek = :dayOfWeek AND isDeleted = 0 AND isActive = 1 ORDER BY startTimeMinutes ASC")
+    suspend fun getActiveSchedulesForDay(dayOfWeek: Int): List<ScheduleEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(schedule: ScheduleEntity)
@@ -90,20 +102,38 @@ interface ScheduleDao {
     @Update
     suspend fun update(schedule: ScheduleEntity)
 
+    @Query("UPDATE schedules SET isActive = :isActive, updatedAt = :updatedAt WHERE id = :id")
+    suspend fun updateActiveStatus(id: String, isActive: Boolean, updatedAt: Long)
+
     @Query("UPDATE schedules SET isDeleted = 1, deletedAt = :deletedAt, updatedAt = :deletedAt WHERE id = :id")
     suspend fun softDelete(id: String, deletedAt: Long)
 }
 
 @Dao
 interface ClassSessionDao {
-    @Query("SELECT * FROM class_sessions WHERE studentId = :studentId AND isDeleted = 0 ORDER BY sessionDate DESC")
+    @Query("SELECT * FROM class_sessions WHERE studentId = :studentId AND isDeleted = 0 ORDER BY sessionDate DESC, scheduledStartTime ASC")
     fun observeSessionsForStudent(studentId: String): Flow<List<ClassSessionEntity>>
 
     @Query("SELECT * FROM class_sessions WHERE sessionDate = :dateEpochMs AND isDeleted = 0 ORDER BY scheduledStartTime ASC")
     fun observeSessionsForDate(dateEpochMs: Long): Flow<List<ClassSessionEntity>>
 
+    @Query("SELECT * FROM class_sessions WHERE isDeleted = 0 ORDER BY sessionDate DESC, scheduledStartTime ASC")
+    fun observeAllSessions(): Flow<List<ClassSessionEntity>>
+
     @Query("SELECT * FROM class_sessions WHERE id = :id AND isDeleted = 0")
     suspend fun getSessionById(id: String): ClassSessionEntity?
+
+    @Query("SELECT * FROM class_sessions WHERE id = :id AND isDeleted = 0")
+    fun observeSessionById(id: String): Flow<ClassSessionEntity?>
+
+    @Query("SELECT * FROM class_sessions WHERE scheduleId = :scheduleId AND sessionDate = :dateEpochMs AND isDeleted = 0")
+    suspend fun getSessionsForScheduleAndDate(scheduleId: String, dateEpochMs: Long): List<ClassSessionEntity>
+
+    @Query("SELECT * FROM class_sessions WHERE sessionDate = :dateEpochMs AND isDeleted = 0 ORDER BY scheduledStartTime ASC")
+    suspend fun getSessionsForDate(dateEpochMs: Long): List<ClassSessionEntity>
+
+    @Query("SELECT * FROM class_sessions WHERE status = :status AND isDeleted = 0")
+    suspend fun getSessionsByStatus(status: String): List<ClassSessionEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(session: ClassSessionEntity)
@@ -113,6 +143,16 @@ interface ClassSessionDao {
 
     @Query("UPDATE class_sessions SET topicCovered = :topic, updatedAt = :updatedAt WHERE id = :id")
     suspend fun updateTopicCovered(id: String, topic: String, updatedAt: Long)
+
+    @Query("UPDATE class_sessions SET status = :status, remarks = :remarks, actualStartTime = :actualStart, actualEndTime = :actualEnd, updatedAt = :updatedAt WHERE id = :id")
+    suspend fun updateStatusWithDetails(
+        id: String,
+        status: String,
+        remarks: String?,
+        actualStart: Int?,
+        actualEnd: Int?,
+        updatedAt: Long
+    )
 
     @Query("UPDATE class_sessions SET status = :status, updatedAt = :updatedAt WHERE id = :id")
     suspend fun updateStatus(id: String, status: String, updatedAt: Long)
@@ -128,6 +168,12 @@ interface RescheduleRecordDao {
 
     @Query("SELECT * FROM reschedule_records WHERE originalSessionId = :sessionId AND isDeleted = 0")
     suspend fun getByOriginalSession(sessionId: String): RescheduleRecordEntity?
+
+    @Query("SELECT * FROM reschedule_records WHERE originalSessionId = :sessionId AND isDeleted = 0")
+    fun observeByOriginalSession(sessionId: String): Flow<RescheduleRecordEntity?>
+
+    @Query("SELECT * FROM reschedule_records WHERE newSessionId = :sessionId AND isDeleted = 0")
+    suspend fun getByNewSession(sessionId: String): RescheduleRecordEntity?
 }
 
 @Dao

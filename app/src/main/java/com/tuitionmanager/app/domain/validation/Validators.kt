@@ -64,3 +64,39 @@ object ExamResultValidator {
         return ValidationResult.Valid
     }
 }
+
+object ScheduleValidator {
+    fun validate(
+        studentId: String,
+        subjectId: String,
+        dayOfWeek: Int,
+        startTimeMinutes: Int,
+        endTimeMinutes: Int
+    ): ValidationResult {
+        if (studentId.isBlank()) return ValidationResult.Invalid("Please select a student")
+        if (subjectId.isBlank()) return ValidationResult.Invalid("Please select a subject")
+        if (dayOfWeek !in 1..7) return ValidationResult.Invalid("Valid day of week (1 to 7) is required")
+        if (startTimeMinutes !in 0..1439) return ValidationResult.Invalid("Start time must be within a valid 24-hour range")
+        if (endTimeMinutes !in 0..1439) return ValidationResult.Invalid("End time must be within a valid 24-hour range")
+        if (startTimeMinutes >= endTimeMinutes) return ValidationResult.Invalid("Start time must be strictly before end time")
+        return ValidationResult.Valid
+    }
+}
+
+object RescheduleValidator {
+    fun validate(
+        originalSessionId: String,
+        newDateEpochMs: Long,
+        newStartTimeMinutes: Int,
+        newEndTimeMinutes: Int,
+        reason: String?
+    ): ValidationResult {
+        if (originalSessionId.isBlank()) return ValidationResult.Invalid("Original session reference is required")
+        if (newDateEpochMs <= 0L) return ValidationResult.Invalid("Valid target reschedule date is required")
+        if (newStartTimeMinutes !in 0..1439) return ValidationResult.Invalid("Start time must be within a valid 24-hour range")
+        if (newEndTimeMinutes !in 0..1439) return ValidationResult.Invalid("End time must be within a valid 24-hour range")
+        if (newStartTimeMinutes >= newEndTimeMinutes) return ValidationResult.Invalid("Start time must be strictly before end time")
+        return ValidationResult.Valid
+    }
+}
+

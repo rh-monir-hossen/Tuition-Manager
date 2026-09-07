@@ -30,7 +30,7 @@ import com.tuitionmanager.app.data.local.entity.*
         BackupMetadataEntity::class,
         SyncMetadataEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -64,7 +64,7 @@ abstract class TuitionDatabase : RoomDatabase() {
                 TuitionDatabase::class.java,
                 DATABASE_NAME
             )
-                .addMigrations(MIGRATION_1_2)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                 .addCallback(object : Callback() {
                     override fun onOpen(db: SupportSQLiteDatabase) {
                         super.onOpen(db)

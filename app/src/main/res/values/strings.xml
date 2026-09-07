@@ -143,4 +143,112 @@
     <string name="dialog_deactivate_student_message">This student will be marked inactive. Their upcoming scheduled sessions will be paused.</string>
     <string name="dialog_delete_diary_title">Delete Diary Entry?</string>
     <string name="dialog_delete_diary_message">Are you sure you want to delete this diary entry?</string>
+
+    <!-- STEP 5: Schedule & Routine -->
+    <string name="title_weekly_routine">Weekly Routine</string>
+    <string name="subtitle_weekly_routine">Weekly Recurring Schedule</string>
+    <string name="action_add_schedule">Add Schedule</string>
+    <string name="title_add_schedule">Add Schedule Slot</string>
+    <string name="title_edit_schedule">Edit Schedule Slot</string>
+    <string name="label_select_student">Student *</string>
+    <string name="label_select_subject">Subject *</string>
+    <string name="label_day_of_week">Day of Week *</string>
+    <string name="label_start_time">Start Time *</string>
+    <string name="label_end_time">End Time *</string>
+    <string name="label_location">Location / Mode</string>
+    <string name="placeholder_location">e.g. Student\'s Home, Online (Zoom), Tutor\'s Desk</string>
+    <string name="label_schedule_notes">Schedule Notes</string>
+    <string name="placeholder_schedule_notes">e.g. Bring physics workbook, 15 min early arrival</string>
+    <string name="label_is_active_schedule">Schedule is Active</string>
+    <string name="tab_all_week">All Week</string>
+    <string name="empty_routine_title">No Schedules for This Day</string>
+    <string name="empty_routine_desc">Tap the button below to add recurring tuition slots.</string>
+    <string name="dialog_delete_schedule_title">Delete Schedule?</string>
+    <string name="dialog_delete_schedule_message">Are you sure you want to delete this recurring schedule slot? Existing generated sessions will not be deleted.</string>
+
+    <!-- Days of Week -->
+    <string name="day_saturday">Saturday</string>
+    <string name="day_sunday">Sunday</string>
+    <string name="day_monday">Monday</string>
+    <string name="day_tuesday">Tuesday</string>
+    <string name="day_wednesday">Wednesday</string>
+    <string name="day_thursday">Thursday</string>
+    <string name="day_friday">Friday</string>
+
+    <string name="day_sat_short">Sat</string>
+    <string name="day_sun_short">Sun</string>
+    <string name="day_mon_short">Mon</string>
+    <string name="day_tue_short">Tue</string>
+    <string name="day_wed_short">Wed</string>
+    <string name="day_thu_short">Thu</string>
+    <string name="day_fri_short">Fri</string>
+
+    <!-- Schedule Conflict Alert -->
+    <string name="dialog_conflict_title">Schedule Conflict Detected</string>
+    <string name="dialog_conflict_message">The proposed slot overlaps with an existing active schedule. Overlapping slots are not allowed.</string>
+    <string name="conflict_details_header">Conflicting Schedule:</string>
+    <string name="conflict_student_label">Student: %1$s</string>
+    <string name="conflict_subject_label">Subject: %1$s</string>
+    <string name="conflict_time_label">Time: %1$s (%2$s)</string>
+
+    <!-- STEP 5: Daily Agenda & Class Sessions -->
+    <string name="title_daily_agenda">Daily Agenda</string>
+    <string name="subtitle_daily_agenda">Today\'s Teaching Sessions</string>
+    <string name="action_today">Today</string>
+    <string name="action_previous_day">Previous Day</string>
+    <string name="action_next_day">Next Day</string>
+    <string name="empty_agenda_title">No Sessions Scheduled</string>
+    <string name="empty_agenda_desc">No classes expected for this date. Generate from weekly routine or add a custom class.</string>
+    <string name="action_generate_sessions">Generate From Routine</string>
+    <string name="title_class_session_details">Session Details</string>
+    <string name="label_scheduled_time">Scheduled Time</string>
+    <string name="label_actual_time">Actual Time Taught</string>
+    <string name="label_topic_summary">Topic Covered</string>
+    <string name="placeholder_topic_summary">Brief topic summary (e.g. Newton\'s 2nd Law &amp; Friction)</string>
+    <string name="label_session_remarks">Session Remarks / Teacher Note</string>
+    <string name="placeholder_session_remarks">Add any observations or notes about this session</string>
+
+    <!-- Session Status Badges & Transitions -->
+    <string name="status_scheduled">Scheduled</string>
+    <string name="status_completed">Completed</string>
+    <string name="status_missed">Missed</string>
+    <string name="status_cancelled">Cancelled</string>
+    <string name="status_rescheduled">Rescheduled</string>
+
+    <string name="action_mark_completed">Mark Completed</string>
+    <string name="action_mark_missed">Mark Missed</string>
+    <string name="action_mark_cancelled">Cancel Class</string>
+    <string name="action_reschedule">Reschedule</string>
+    <string name="action_create_diary_entry">Create Diary Entry</string>
+    <string name="action_view_diary_entry">View Diary Entry</string>
+    <string name="badge_has_diary">Diary Logged</string>
+    <string name="rescheduled_from_note">Rescheduled slot</string>
+
+    <!-- Dialogs for Session Status -->
+    <string name="dialog_complete_session_title">Complete Class Session</string>
+    <string name="dialog_complete_session_message">Mark this tuition session as completed. You can log what was taught and optionally create a detailed Diary Entry.</string>
+    <string name="dialog_cancel_session_title">Cancel Class Session</string>
+    <string name="dialog_cancel_session_message">Specify why this class is being cancelled:</string>
+    <string name="label_cancellation_reason">Cancellation Reason</string>
+    <string name="placeholder_cancellation_reason">e.g. Student ill, exam preparation break</string>
+
+    <string name="dialog_missed_session_title">Mark Session as Missed</string>
+    <string name="dialog_missed_session_message">Record this class as missed without prior notice:</string>
+    <string name="label_missed_reason">Remarks (Optional)</string>
+
+    <!-- Reschedule Dialog -->
+    <string name="dialog_reschedule_title">Reschedule Class Session</string>
+    <string name="dialog_reschedule_message">Move this session to a new date and time slot:</string>
+    <string name="label_new_date">Target Date *</string>
+    <string name="label_new_start_time">New Start Time *</string>
+    <string name="label_new_end_time">New End Time *</string>
+    <string name="label_reschedule_reason">Reason for Rescheduling</string>
+    <string name="placeholder_reschedule_reason">e.g. School sporting event, requested by guardian</string>
+    <string name="action_confirm_reschedule">Confirm Reschedule</string>
+
+    <!-- Student Profile Schedule & Classes Tab -->
+    <string name="student_schedule_empty">No recurring schedule set for this student.</string>
+    <string name="student_classes_empty">No class sessions recorded yet.</string>
+    <string name="filter_all">All</string>
 </resources>
+

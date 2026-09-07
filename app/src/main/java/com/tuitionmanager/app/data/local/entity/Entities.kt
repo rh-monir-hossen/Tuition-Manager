@@ -110,6 +110,8 @@ data class ScheduleEntity(
     val effectiveStartDate: Long,
     val effectiveEndDate: Long?,
     val isActive: Boolean,
+    val location: String? = null,
+    val notes: String? = null,
     val createdAt: Long,
     val updatedAt: Long,
     val isDeleted: Boolean = false,

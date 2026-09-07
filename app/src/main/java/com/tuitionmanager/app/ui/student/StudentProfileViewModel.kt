@@ -27,6 +27,8 @@ data class StudentProfileUiState(
     val stats: StudentStats = StudentStats(),
     val subjects: List<StudentSubject> = emptyList(),
     val recentDiaries: List<StudentDiary> = emptyList(),
+    val schedules: List<ScheduleWithDetails> = emptyList(),
+    val sessions: List<ClassSessionWithDetails> = emptyList(),
     val selectedTab: ProfileTab = ProfileTab.OVERVIEW,
     val error: String? = null
 )
@@ -37,6 +39,8 @@ class StudentProfileViewModel @Inject constructor(
     private val getStudentStatsUseCase: GetStudentStatsUseCase,
     private val observeSubjectsForStudentUseCase: ObserveSubjectsForStudentUseCase,
     private val observeDiaryHistoryUseCase: ObserveDiaryHistoryUseCase,
+    private val observeSchedulesForStudentUseCase: ObserveSchedulesForStudentUseCase,
+    private val observeSessionsForStudentUseCase: ObserveSessionsForStudentUseCase,
     private val toggleStudentActiveUseCase: ToggleStudentActiveUseCase,
     private val deleteStudentUseCase: DeleteStudentUseCase,
     savedStateHandle: SavedStateHandle
@@ -50,14 +54,18 @@ class StudentProfileViewModel @Inject constructor(
         getStudentStatsUseCase(studentId),
         observeSubjectsForStudentUseCase(studentId),
         observeDiaryHistoryUseCase(studentId),
+        observeSchedulesForStudentUseCase(studentId),
+        observeSessionsForStudentUseCase(studentId),
         _selectedTab
-    ) { student, stats, subjects, diaries, tab ->
+    ) { student, stats, subjects, diaries, schedules, sessions, tab ->
         StudentProfileUiState(
             isLoading = false,
             student = student,
             stats = stats,
             subjects = subjects,
             recentDiaries = diaries.take(10),
+            schedules = schedules,
+            sessions = sessions,
             selectedTab = tab,
             error = if (student == null) "Student not found" else null
         )

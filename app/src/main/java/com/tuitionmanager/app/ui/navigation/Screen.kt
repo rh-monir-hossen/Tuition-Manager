@@ -25,4 +25,30 @@ sealed class Screen(val route: String) {
     object EditDiaryEntry : Screen("diary/{diaryId}/edit") {
         fun createRoute(diaryId: String) = "diary/$diaryId/edit"
     }
+
+    // STEP 5: Routine & Agenda Screens
+    object WeeklyRoutine : Screen("routine")
+
+    object AddSchedule : Screen("schedule/add?studentId={studentId}") {
+        fun createRoute(studentId: String? = null): String {
+            val sParam = studentId ?: ""
+            return "schedule/add?studentId=$sParam"
+        }
+    }
+
+    object EditSchedule : Screen("schedule/edit/{scheduleId}") {
+        fun createRoute(scheduleId: String) = "schedule/edit/$scheduleId"
+    }
+
+    object DailyAgenda : Screen("agenda?dateEpochMs={dateEpochMs}") {
+        fun createRoute(dateEpochMs: Long? = null): String {
+            val dParam = dateEpochMs?.toString() ?: ""
+            return "agenda?dateEpochMs=$dParam"
+        }
+    }
+
+    object ClassSessionDetail : Screen("session/{sessionId}") {
+        fun createRoute(sessionId: String) = "session/$sessionId"
+    }
 }
+

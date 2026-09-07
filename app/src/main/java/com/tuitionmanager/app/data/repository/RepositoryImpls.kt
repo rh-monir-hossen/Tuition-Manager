@@ -225,6 +225,145 @@ class ExamRepositoryImpl @Inject constructor(
     }
 }
 
+@Singleton
+class ScheduleRepositoryImpl @Inject constructor(
+    private val scheduleDao: ScheduleDao
+) : ScheduleRepository {
+
+    override fun observeAllActiveSchedules(): Flow<List<Schedule>> {
+        return scheduleDao.observeAllActiveSchedules().map { list -> list.map { it.toDomain() } }
+    }
+
+    override fun observeSchedulesForDay(dayOfWeek: Int): Flow<List<Schedule>> {
+        return scheduleDao.observeSchedulesForDay(dayOfWeek).map { list -> list.map { it.toDomain() } }
+    }
+
+    override fun observeSchedulesForStudent(studentId: String): Flow<List<Schedule>> {
+        return scheduleDao.observeSchedulesForStudent(studentId).map { list -> list.map { it.toDomain() } }
+    }
+
+    override suspend fun getScheduleById(id: String): Schedule? {
+        return scheduleDao.getScheduleById(id)?.toDomain()
+    }
+
+    override suspend fun getAllActiveSchedules(): List<Schedule> {
+        return scheduleDao.getAllActiveSchedules().map { it.toDomain() }
+    }
+
+    override suspend fun getActiveSchedulesForDay(dayOfWeek: Int): List<Schedule> {
+        return scheduleDao.getActiveSchedulesForDay(dayOfWeek).map { it.toDomain() }
+    }
+
+    override suspend fun addSchedule(schedule: Schedule) {
+        scheduleDao.insert(schedule.toEntity())
+    }
+
+    override suspend fun updateSchedule(schedule: Schedule) {
+        scheduleDao.update(schedule.toEntity())
+    }
+
+    override suspend fun updateActiveStatus(id: String, isActive: Boolean) {
+        scheduleDao.updateActiveStatus(id, isActive, System.currentTimeMillis())
+    }
+
+    override suspend fun deleteSchedule(id: String) {
+        scheduleDao.softDelete(id, System.currentTimeMillis())
+    }
+}
+
+@Singleton
+class ClassSessionRepositoryImpl @Inject constructor(
+    private val classSessionDao: ClassSessionDao
+) : ClassSessionRepository {
+
+    override fun observeSessionsForStudent(studentId: String): Flow<List<ClassSession>> {
+        return classSessionDao.observeSessionsForStudent(studentId).map { list -> list.map { it.toDomain() } }
+    }
+
+    override fun observeSessionsForDate(dateEpochMs: Long): Flow<List<ClassSession>> {
+        return classSessionDao.observeSessionsForDate(dateEpochMs).map { list -> list.map { it.toDomain() } }
+    }
+
+    override fun observeAllSessions(): Flow<List<ClassSession>> {
+        return classSessionDao.observeAllSessions().map { list -> list.map { it.toDomain() } }
+    }
+
+    override suspend fun getSessionById(id: String): ClassSession? {
+        return classSessionDao.getSessionById(id)?.toDomain()
+    }
+
+    override fun observeSessionById(id: String): Flow<ClassSession?> {
+        return classSessionDao.observeSessionById(id).map { it?.toDomain() }
+    }
+
+    override suspend fun getSessionsForScheduleAndDate(scheduleId: String, dateEpochMs: Long): List<ClassSession> {
+        return classSessionDao.getSessionsForScheduleAndDate(scheduleId, dateEpochMs).map { it.toDomain() }
+    }
+
+    override suspend fun getSessionsForDate(dateEpochMs: Long): List<ClassSession> {
+        return classSessionDao.getSessionsForDate(dateEpochMs).map { it.toDomain() }
+    }
+
+    override suspend fun getSessionsByStatus(status: SessionStatus): List<ClassSession> {
+        return classSessionDao.getSessionsByStatus(status.name).map { it.toDomain() }
+    }
+
+    override suspend fun addSession(session: ClassSession) {
+        classSessionDao.insert(session.toEntity())
+    }
+
+    override suspend fun updateSession(session: ClassSession) {
+        classSessionDao.update(session.toEntity())
+    }
+
+    override suspend fun updateStatus(
+        id: String,
+        status: SessionStatus,
+        remarks: String?,
+        actualStart: Int?,
+        actualEnd: Int?
+    ) {
+        classSessionDao.updateStatusWithDetails(
+            id = id,
+            status = status.name,
+            remarks = remarks,
+            actualStart = actualStart,
+            actualEnd = actualEnd,
+            updatedAt = System.currentTimeMillis()
+        )
+    }
+
+    override suspend fun updateTopicCovered(id: String, topic: String) {
+        classSessionDao.updateTopicCovered(id, topic, System.currentTimeMillis())
+    }
+
+    override suspend fun deleteSession(id: String) {
+        classSessionDao.softDelete(id, System.currentTimeMillis())
+    }
+}
+
+@Singleton
+class RescheduleRepositoryImpl @Inject constructor(
+    private val rescheduleRecordDao: RescheduleRecordDao
+) : RescheduleRepository {
+
+    override suspend fun addRescheduleRecord(record: RescheduleRecord) {
+        rescheduleRecordDao.insert(record.toEntity())
+    }
+
+    override suspend fun getByOriginalSession(sessionId: String): RescheduleRecord? {
+        return rescheduleRecordDao.getByOriginalSession(sessionId)?.toDomain()
+    }
+
+    override fun observeByOriginalSession(sessionId: String): Flow<RescheduleRecord?> {
+        return rescheduleRecordDao.observeByOriginalSession(sessionId).map { it?.toDomain() }
+    }
+
+    override suspend fun getByNewSession(sessionId: String): RescheduleRecord? {
+        return rescheduleRecordDao.getByNewSession(sessionId)?.toDomain()
+    }
+}
+
 // ----------------- Mapping Functions -----------------
 
 fun StudentEntity.toDomain() = Student(
@@ -408,3 +547,104 @@ fun ExamResult.toEntity() = ExamResultEntity(
     isDeleted = isDeleted,
     deletedAt = deletedAt
 )
+
+fun ScheduleEntity.toDomain() = Schedule(
+    id = id,
+    studentId = studentId,
+    subjectId = subjectId,
+    dayOfWeek = dayOfWeek,
+    startTimeMinutes = startTimeMinutes,
+    endTimeMinutes = endTimeMinutes,
+    effectiveStartDate = effectiveStartDate,
+    effectiveEndDate = effectiveEndDate,
+    isActive = isActive,
+    location = location,
+    notes = notes,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    isDeleted = isDeleted,
+    deletedAt = deletedAt
+)
+
+fun Schedule.toEntity() = ScheduleEntity(
+    id = id,
+    studentId = studentId,
+    subjectId = subjectId,
+    dayOfWeek = dayOfWeek,
+    startTimeMinutes = startTimeMinutes,
+    endTimeMinutes = endTimeMinutes,
+    effectiveStartDate = effectiveStartDate,
+    effectiveEndDate = effectiveEndDate,
+    isActive = isActive,
+    location = location,
+    notes = notes,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    isDeleted = isDeleted,
+    deletedAt = deletedAt
+)
+
+fun ClassSessionEntity.toDomain() = ClassSession(
+    id = id,
+    studentId = studentId,
+    scheduleId = scheduleId,
+    subjectId = subjectId,
+    sessionDate = sessionDate,
+    scheduledStartTime = scheduledStartTime,
+    scheduledEndTime = scheduledEndTime,
+    actualStartTime = actualStartTime,
+    actualEndTime = actualEndTime,
+    status = try { SessionStatus.valueOf(status) } catch (e: Exception) { SessionStatus.SCHEDULED },
+    remarks = remarks,
+    topicCovered = topicCovered,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    isDeleted = isDeleted,
+    deletedAt = deletedAt
+)
+
+fun ClassSession.toEntity() = ClassSessionEntity(
+    id = id,
+    studentId = studentId,
+    scheduleId = scheduleId,
+    subjectId = subjectId,
+    sessionDate = sessionDate,
+    scheduledStartTime = scheduledStartTime,
+    scheduledEndTime = scheduledEndTime,
+    actualStartTime = actualStartTime,
+    actualEndTime = actualEndTime,
+    status = status.name,
+    remarks = remarks,
+    topicCovered = topicCovered,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    isDeleted = isDeleted,
+    deletedAt = deletedAt
+)
+
+fun RescheduleRecordEntity.toDomain() = RescheduleRecord(
+    id = id,
+    originalSessionId = originalSessionId,
+    newSessionId = newSessionId,
+    rescheduledBy = rescheduledBy,
+    reason = reason,
+    requestedAt = requestedAt,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    isDeleted = isDeleted,
+    deletedAt = deletedAt
+)
+
+fun RescheduleRecord.toEntity() = RescheduleRecordEntity(
+    id = id,
+    originalSessionId = originalSessionId,
+    newSessionId = newSessionId,
+    rescheduledBy = rescheduledBy,
+    reason = reason,
+    requestedAt = requestedAt,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    isDeleted = isDeleted,
+    deletedAt = deletedAt
+)
+
