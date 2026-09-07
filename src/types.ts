@@ -14,7 +14,7 @@ export interface DatabaseEntity {
   id: string;
   name: string;
   tableName: string;
-  category: 'Core' | 'Schedule' | 'Finance' | 'Sync & System';
+  category: 'Core' | 'Schedule' | 'Finance' | 'Sync & System' | 'Academic';
   description: string;
   badge?: string;
   fields: EntityField[];

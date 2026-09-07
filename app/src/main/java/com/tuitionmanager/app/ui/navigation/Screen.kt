@@ -50,5 +50,13 @@ sealed class Screen(val route: String) {
     object ClassSessionDetail : Screen("session/{sessionId}") {
         fun createRoute(sessionId: String) = "session/$sessionId"
     }
+
+    object ClassHistory : Screen("class_history?studentId={studentId}") {
+        fun createRoute(studentId: String? = null): String {
+            val sParam = studentId ?: ""
+            return "class_history?studentId=$sParam"
+        }
+    }
 }
+
 

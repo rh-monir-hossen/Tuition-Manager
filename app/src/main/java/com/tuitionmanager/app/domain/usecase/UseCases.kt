@@ -237,7 +237,8 @@ class GetStudentStatsUseCase @Inject constructor(
 // ----------------- Diary Use Cases -----------------
 
 class AddDiaryEntryUseCase @Inject constructor(
-    private val diaryRepository: StudentDiaryRepository
+    private val diaryRepository: StudentDiaryRepository,
+    private val classSessionRepository: ClassSessionRepository
 ) {
     suspend operator fun invoke(entry: StudentDiary): AppResult<Unit> {
         val validation = DiaryValidator.validate(
@@ -251,12 +252,22 @@ class AddDiaryEntryUseCase @Inject constructor(
         }
         return try {
             diaryRepository.addDiaryEntry(entry)
+
+            // Backfill class session topicCovered if linked and currently blank
+            if (!entry.classSessionId.isNullOrBlank()) {
+                val session = classSessionRepository.getSessionById(entry.classSessionId)
+                if (session != null && session.topicCovered.isNullOrBlank()) {
+                    classSessionRepository.updateTopicCovered(entry.classSessionId, entry.topicTitle)
+                }
+            }
+
             AppResult.Success(Unit)
         } catch (e: Exception) {
             AppResult.Error(e.message ?: "Failed to save diary entry")
         }
     }
 }
+
 
 class UpdateDiaryEntryUseCase @Inject constructor(
     private val diaryRepository: StudentDiaryRepository
@@ -827,6 +838,50 @@ class ObserveSessionsForStudentUseCase @Inject constructor(
                     studentName = student?.name ?: "Student",
                     studentPhone = student?.phone,
                     subjectName = subjectMap[session.subjectId]?.subjectName ?: "Tuition",
+                    timeFormatted = timeFormatted,
+                    dayFormatted = dayName,
+                    dateFormatted = dateFormatted,
+                    hasDiaryEntry = diaries.isNotEmpty(),
+                    diaryEntryId = diaries.firstOrNull()?.id,
+                    rescheduleReason = reschedule?.reason
+                )
+            }
+        }
+    }
+}
+
+class ObserveAllSessionsUseCase @Inject constructor(
+    private val classSessionRepository: ClassSessionRepository,
+    private val studentRepository: StudentRepository,
+    private val subjectRepository: StudentSubjectRepository,
+    private val diaryDao: StudentDiaryDao,
+    private val rescheduleRepository: RescheduleRepository
+) {
+    operator fun invoke(): Flow<List<ClassSessionWithDetails>> {
+        return combine(
+            classSessionRepository.observeAllSessions(),
+            studentRepository.observeAllStudents(),
+            subjectRepository.observeAllSubjects()
+        ) { sessions, students, subjects ->
+            val studentMap = students.associateBy { it.id }
+            val subjectMap = subjects.associateBy { it.id }
+
+            sessions.map { session ->
+                val student = studentMap[session.studentId]
+                val subject = subjectMap[session.subjectId]
+                val diaries = diaryDao.getDiaryEntriesForSession(session.id)
+                val reschedule = rescheduleRepository.getByOriginalSession(session.id)
+
+                val dayOfWeek = TimeUtils.getDayOfWeek(session.sessionDate)
+                val dayName = RoutineDay.fromDayOfWeek(dayOfWeek).displayName
+                val dateFormatted = TimeUtils.formatLocalDate(session.sessionDate, "dd MMM yyyy")
+                val timeFormatted = "${TimeUtils.formatMinutesToTime(session.scheduledStartTime)} - ${TimeUtils.formatMinutesToTime(session.scheduledEndTime)}"
+
+                ClassSessionWithDetails(
+                    session = session,
+                    studentName = student?.name ?: "Student",
+                    studentPhone = student?.phone,
+                    subjectName = subject?.subjectName ?: "Tuition",
                     timeFormatted = timeFormatted,
                     dayFormatted = dayName,
                     dateFormatted = dateFormatted,

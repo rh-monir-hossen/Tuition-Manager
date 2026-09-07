@@ -9,7 +9,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.tuitionmanager.app.ui.agenda.*
 import com.tuitionmanager.app.ui.diary.*
+import com.tuitionmanager.app.ui.schedule.*
 import com.tuitionmanager.app.ui.student.*
 
 @Composable
@@ -39,6 +41,15 @@ fun TuitionNavGraph(
                 },
                 onViewDiaryHistoryClick = { studentId ->
                     navController.navigate(Screen.StudentDiaryHistory.createRoute(studentId))
+                },
+                onRoutineClick = {
+                    navController.navigate(Screen.WeeklyRoutine.route)
+                },
+                onAgendaClick = {
+                    navController.navigate(Screen.DailyAgenda.createRoute())
+                },
+                onClassHistoryClick = {
+                    navController.navigate(Screen.ClassHistory.createRoute())
                 }
             )
         }
@@ -88,6 +99,18 @@ fun TuitionNavGraph(
                 },
                 onViewAllDiaries = { studentId ->
                     navController.navigate(Screen.StudentDiaryHistory.createRoute(studentId))
+                },
+                onAddSchedule = { studentId ->
+                    navController.navigate(Screen.AddSchedule.createRoute(studentId = studentId))
+                },
+                onEditSchedule = { scheduleId ->
+                    navController.navigate(Screen.EditSchedule.createRoute(scheduleId = scheduleId))
+                },
+                onSessionClick = { sessionId ->
+                    navController.navigate(Screen.ClassSessionDetail.createRoute(sessionId = sessionId))
+                },
+                onViewAllSessions = { studentId ->
+                    navController.navigate(Screen.ClassHistory.createRoute(studentId = studentId))
                 }
             )
         }
@@ -163,6 +186,151 @@ fun TuitionNavGraph(
             DiaryEntryScreen(
                 viewModel = viewModel,
                 onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+        // 9. Weekly Routine Screen (STEP 5)
+        composable(route = Screen.WeeklyRoutine.route) {
+            val viewModel: RoutineViewModel = hiltViewModel()
+            RoutineScreen(
+                viewModel = viewModel,
+                onNavigateBack = { navController.popBackStack() },
+                onAddScheduleClick = {
+                    navController.navigate(Screen.AddSchedule.createRoute())
+                },
+                onEditScheduleClick = { scheduleId ->
+                    navController.navigate(Screen.EditSchedule.createRoute(scheduleId))
+                },
+                onStudentClick = { studentId ->
+                    navController.navigate(Screen.StudentProfile.createRoute(studentId))
+                }
+            )
+        }
+
+        // 10. Add Schedule Slot (STEP 5)
+        composable(
+            route = Screen.AddSchedule.route,
+            arguments = listOf(
+                navArgument("studentId") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                    nullable = true
+                }
+            )
+        ) {
+            val viewModel: ScheduleFormViewModel = hiltViewModel()
+            ScheduleFormScreen(
+                viewModel = viewModel,
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+        // 11. Edit Schedule Slot (STEP 5)
+        composable(
+            route = Screen.EditSchedule.route,
+            arguments = listOf(
+                navArgument("scheduleId") { type = NavType.StringType }
+            )
+        ) {
+            val viewModel: ScheduleFormViewModel = hiltViewModel()
+            ScheduleFormScreen(
+                viewModel = viewModel,
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+        // 12. Daily Agenda (STEP 5)
+        composable(
+            route = Screen.DailyAgenda.route,
+            arguments = listOf(
+                navArgument("dateEpochMs") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                    nullable = true
+                }
+            )
+        ) {
+            val viewModel: DailyAgendaViewModel = hiltViewModel()
+            DailyAgendaScreen(
+                viewModel = viewModel,
+                onNavigateBack = { navController.popBackStack() },
+                onSessionClick = { sessionId ->
+                    navController.navigate(Screen.ClassSessionDetail.createRoute(sessionId))
+                },
+                onStudentClick = { studentId ->
+                    navController.navigate(Screen.StudentProfile.createRoute(studentId))
+                },
+                onCreateDiary = { studentId, classSessionId ->
+                    navController.navigate(
+                        Screen.AddDiaryEntry.createRoute(
+                            studentId = studentId,
+                            classSessionId = classSessionId
+                        )
+                    )
+                },
+                onViewDiary = { diaryId ->
+                    navController.navigate(Screen.DiaryDetail.createRoute(diaryId))
+                }
+            )
+        }
+
+        // 13. Class Session Detail (STEP 5)
+        composable(
+            route = Screen.ClassSessionDetail.route,
+            arguments = listOf(
+                navArgument("sessionId") { type = NavType.StringType }
+            )
+        ) {
+            val viewModel: ClassSessionDetailViewModel = hiltViewModel()
+            ClassSessionDetailScreen(
+                viewModel = viewModel,
+                onNavigateBack = { navController.popBackStack() },
+                onStudentClick = { studentId ->
+                    navController.navigate(Screen.StudentProfile.createRoute(studentId))
+                },
+                onCreateDiaryClick = { studentId, classSessionId ->
+                    navController.navigate(
+                        Screen.AddDiaryEntry.createRoute(
+                            studentId = studentId,
+                            classSessionId = classSessionId
+                        )
+                    )
+                },
+                onViewDiaryClick = { diaryId ->
+                    navController.navigate(Screen.DiaryDetail.createRoute(diaryId))
+                }
+            )
+        }
+
+        // 14. Class History (STEP 5)
+        composable(
+            route = Screen.ClassHistory.route,
+            arguments = listOf(
+                navArgument("studentId") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                    nullable = true
+                }
+            )
+        ) {
+            val viewModel: ClassHistoryViewModel = hiltViewModel()
+            ClassHistoryScreen(
+                viewModel = viewModel,
+                onNavigateBack = { navController.popBackStack() },
+                onSessionClick = { sessionId ->
+                    navController.navigate(Screen.ClassSessionDetail.createRoute(sessionId))
+                },
+                onNavigateToDiaryEntry = { studentId, subjectId, classSessionId ->
+                    navController.navigate(
+                        Screen.AddDiaryEntry.createRoute(
+                            studentId = studentId,
+                            classSessionId = classSessionId
+                        )
+                    )
+                },
+                onNavigateToDiaryDetail = { diaryId ->
+                    navController.navigate(Screen.DiaryDetail.createRoute(diaryId))
+                }
             )
         }
     }

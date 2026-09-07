@@ -35,7 +35,8 @@ fun StudentListScreen(
     onAddDiaryClick: (String) -> Unit,
     onViewDiaryHistoryClick: (String) -> Unit,
     onRoutineClick: () -> Unit,
-    onAgendaClick: () -> Unit
+    onAgendaClick: () -> Unit,
+    onClassHistoryClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var studentToDelete by remember { mutableStateOf<Student?>(null) }
@@ -72,6 +73,13 @@ fun StudentListScreen(
                         Icon(
                             imageVector = Icons.Outlined.CalendarMonth,
                             contentDescription = stringResource(R.string.title_weekly_routine),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    IconButton(onClick = onClassHistoryClick) {
+                        Icon(
+                            imageVector = Icons.Outlined.History,
+                            contentDescription = stringResource(R.string.class_history_title),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }

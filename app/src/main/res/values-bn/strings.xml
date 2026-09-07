@@ -250,5 +250,15 @@
     <string name="student_schedule_empty">এই শিক্ষার্থীর কোনো নিয়মিত শিডিউল সেট করা নেই।</string>
     <string name="student_classes_empty">এখনো কোনো ক্লাসের রেকর্ড নেই।</string>
     <string name="filter_all">সকল</string>
+    <string name="class_history_title">ক্লাসের ইতিহাস</string>
+    <string name="all_students">সকল শিক্ষার্থী</string>
+    <string name="all_subjects">সকল বিষয়</string>
+    <string name="all_status">সকল স্ট্যাটাস</string>
+    <string name="no_class_history_found">কোনো ক্লাসের রেকর্ড পাওয়া যায়নি</string>
+    <string name="topic_label">টপিক: %1$s</string>
+    <string name="view_diary">ডায়েরি দেখুন</string>
+    <string name="add_schedule_slot">শিডিউল স্লট যোগ করুন</string>
+    <string name="schedule_slots_title">সাপ্তাহিক রুটিন স্লট</string>
 </resources>
+
 

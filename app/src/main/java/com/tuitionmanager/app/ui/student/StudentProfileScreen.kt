@@ -25,7 +25,10 @@ import com.tuitionmanager.app.domain.model.HomeworkStatus
 import com.tuitionmanager.app.domain.model.Student
 import com.tuitionmanager.app.domain.model.StudentDiary
 import com.tuitionmanager.app.domain.model.StudentUnderstanding
+import com.tuitionmanager.app.domain.model.ScheduleWithDetails
+import com.tuitionmanager.app.domain.model.ClassSessionWithDetails
 import com.tuitionmanager.app.ui.components.*
+import com.tuitionmanager.app.ui.schedule.SessionStatusChip
 import com.tuitionmanager.app.utils.TimeUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,7 +39,11 @@ fun StudentProfileScreen(
     onEditStudent: (String) -> Unit,
     onAddDiary: (String) -> Unit,
     onDiaryClick: (String) -> Unit,
-    onViewAllDiaries: (String) -> Unit
+    onViewAllDiaries: (String) -> Unit,
+    onAddSchedule: (String) -> Unit = {},
+    onEditSchedule: (String) -> Unit = {},
+    onSessionClick: (String) -> Unit = {},
+    onViewAllSessions: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showDeleteConfirm by remember { mutableStateOf(false) }
@@ -129,6 +136,22 @@ fun StudentProfileScreen(
                             onAddDiary = { onAddDiary(student.id) },
                             onDiaryClick = onDiaryClick,
                             onViewAllDiaries = { onViewAllDiaries(student.id) }
+                        )
+                    }
+                    ProfileTab.SCHEDULE -> {
+                        StudentScheduleTabContent(
+                            studentId = student.id,
+                            schedules = uiState.schedules,
+                            onAddSchedule = { onAddSchedule(student.id) },
+                            onEditSchedule = onEditSchedule
+                        )
+                    }
+                    ProfileTab.CLASSES -> {
+                        StudentClassesTabContent(
+                            studentId = student.id,
+                            sessions = uiState.sessions,
+                            onSessionClick = onSessionClick,
+                            onViewAllSessions = { onViewAllSessions(student.id) }
                         )
                     }
                     ProfileTab.DIARY -> {
@@ -675,3 +698,255 @@ private fun PlaceholderTabContent(tab: ProfileTab) {
         }
     }
 }
+
+@Composable
+private fun StudentScheduleTabContent(
+    studentId: String,
+    schedules: List<ScheduleWithDetails>,
+    onAddSchedule: () -> Unit,
+    onEditSchedule: (String) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.schedule_slots_title),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+            FilledTonalButton(onClick = onAddSchedule) {
+                Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(16.dp))
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(stringResource(R.string.add_schedule_slot))
+            }
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        if (schedules.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(32.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(
+                        Icons.Outlined.CalendarToday,
+                        contentDescription = null,
+                        modifier = Modifier.size(48.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = stringResource(R.string.student_schedule_empty),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(schedules, key = { it.schedule.id }) { item ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onEditSchedule(item.schedule.id) },
+                        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(14.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Surface(
+                                        shape = RoundedCornerShape(4.dp),
+                                        color = MaterialTheme.colorScheme.primaryContainer
+                                    ) {
+                                        Text(
+                                            text = item.dayName,
+                                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = item.subjectName,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(6.dp))
+                                Text(
+                                    text = item.timeFormatted,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                if (item.schedule.isActive) {
+                                    AssistChip(
+                                        onClick = { onEditSchedule(item.schedule.id) },
+                                        label = { Text("Active", style = MaterialTheme.typography.labelSmall) },
+                                        colors = AssistChipDefaults.assistChipColors(
+                                            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                            labelColor = MaterialTheme.colorScheme.primary
+                                        )
+                                    )
+                                } else {
+                                    AssistChip(
+                                        onClick = { onEditSchedule(item.schedule.id) },
+                                        label = { Text("Inactive", style = MaterialTheme.typography.labelSmall) }
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Icon(
+                                    Icons.Default.ChevronRight,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun StudentClassesTabContent(
+    studentId: String,
+    sessions: List<ClassSessionWithDetails>,
+    onSessionClick: (String) -> Unit,
+    onViewAllSessions: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            val completedCount = sessions.count { it.session.status == com.tuitionmanager.app.domain.model.SessionStatus.COMPLETED }
+            val missedCount = sessions.count { it.session.status == com.tuitionmanager.app.domain.model.SessionStatus.MISSED }
+
+            Text(
+                text = "Sessions (${sessions.size}) • $completedCount Done • $missedCount Missed",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            TextButton(onClick = onViewAllSessions) {
+                Text(stringResource(R.string.class_history_title))
+                Spacer(modifier = Modifier.width(4.dp))
+                Icon(Icons.Default.ArrowForward, contentDescription = null, modifier = Modifier.size(16.dp))
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        if (sessions.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(32.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(
+                        Icons.Outlined.EventNote,
+                        contentDescription = null,
+                        modifier = Modifier.size(48.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = stringResource(R.string.student_classes_empty),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(sessions.take(30), key = { it.session.id }) { item ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onSessionClick(item.session.id) },
+                        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(12.dp)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = item.subjectName,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                SessionStatusChip(status = item.session.status)
+                            }
+
+                            Spacer(modifier = Modifier.height(4.dp))
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = "${item.dateFormatted} (${item.dayFormatted})",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                Text(
+                                    text = item.timeFormatted,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+
+                            if (!item.session.topicCovered.isNullOrBlank()) {
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = item.session.topicCovered ?: "",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+

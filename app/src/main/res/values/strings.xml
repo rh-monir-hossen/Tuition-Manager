@@ -250,5 +250,15 @@
     <string name="student_schedule_empty">No recurring schedule set for this student.</string>
     <string name="student_classes_empty">No class sessions recorded yet.</string>
     <string name="filter_all">All</string>
+    <string name="class_history_title">Class History</string>
+    <string name="all_students">All Students</string>
+    <string name="all_subjects">All Subjects</string>
+    <string name="all_status">All Status</string>
+    <string name="no_class_history_found">No class history records found</string>
+    <string name="topic_label">Topic: %1$s</string>
+    <string name="view_diary">View Diary</string>
+    <string name="add_schedule_slot">Add Schedule Slot</string>
+    <string name="schedule_slots_title">Weekly Schedule Slots</string>
 </resources>
+
 
