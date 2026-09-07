@@ -169,6 +169,10 @@ class ExamRepositoryImpl @Inject constructor(
     private val examResultDao: ExamResultDao
 ) : ExamRepository {
 
+    override fun observeAllExams(): Flow<List<Exam>> {
+        return examDao.observeAllExams().map { list -> list.map { it.toDomain() } }
+    }
+
     override fun observeExamsForStudent(studentId: String): Flow<List<Exam>> {
         return examDao.observeExamsForStudent(studentId).map { list -> list.map { it.toDomain() } }
     }
@@ -185,12 +189,20 @@ class ExamRepositoryImpl @Inject constructor(
         return examDao.getExamById(id)?.toDomain()
     }
 
+    override fun observeExamById(id: String): Flow<Exam?> {
+        return examDao.observeExamById(id).map { it?.toDomain() }
+    }
+
     override suspend fun planExam(exam: Exam) {
         examDao.insert(exam.toEntity())
     }
 
     override suspend fun updateExam(exam: Exam) {
         examDao.update(exam.toEntity())
+    }
+
+    override suspend fun updateStatus(id: String, status: ExamStatus) {
+        examDao.updateStatus(id, status.name, System.currentTimeMillis())
     }
 
     override suspend fun cancelExam(id: String) {
@@ -203,8 +215,40 @@ class ExamRepositoryImpl @Inject constructor(
         examResultDao.softDelete(id, now)
     }
 
+    override suspend fun restoreExam(id: String) {
+        val now = System.currentTimeMillis()
+        examDao.restore(id, now)
+        examResultDao.restore(id, now)
+    }
+
+    override fun filterAllExams(
+        studentId: String?,
+        subjectId: String?,
+        examType: ExamType?,
+        status: ExamStatus?,
+        startDateEpochMs: Long?,
+        endDateEpochMs: Long?
+    ): Flow<List<Exam>> {
+        return examDao.filterAllExams(
+            studentId = studentId,
+            subjectId = subjectId,
+            examType = examType?.name,
+            status = status?.name,
+            startDateEpochMs = startDateEpochMs,
+            endDateEpochMs = endDateEpochMs
+        ).map { list -> list.map { it.toDomain() } }
+    }
+
+    override fun searchExams(studentId: String?, query: String): Flow<List<Exam>> {
+        return examDao.searchExams(studentId, query).map { list -> list.map { it.toDomain() } }
+    }
+
     override suspend fun getResultForExam(examId: String): ExamResult? {
         return examResultDao.getResultForExam(examId)?.toDomain()
+    }
+
+    override suspend fun getResultById(id: String): ExamResult? {
+        return examResultDao.getResultById(id)?.toDomain()
     }
 
     override fun observeResultForExam(examId: String): Flow<ExamResult?> {
@@ -215,6 +259,10 @@ class ExamRepositoryImpl @Inject constructor(
         return examResultDao.observeResultsForStudent(studentId).map { list -> list.map { it.toDomain() } }
     }
 
+    override fun observeAllResults(): Flow<List<ExamResult>> {
+        return examResultDao.observeAllResults().map { list -> list.map { it.toDomain() } }
+    }
+
     override suspend fun recordExamResult(result: ExamResult) {
         examResultDao.insert(result.toEntity())
         examDao.updateStatus(result.examId, ExamStatus.COMPLETED.name, System.currentTimeMillis())
@@ -222,6 +270,14 @@ class ExamRepositoryImpl @Inject constructor(
 
     override suspend fun updateExamResult(result: ExamResult) {
         examResultDao.update(result.toEntity())
+    }
+
+    override suspend fun deleteExamResult(id: String) {
+        examResultDao.softDelete(id, System.currentTimeMillis())
+    }
+
+    override suspend fun restoreExamResult(id: String) {
+        examResultDao.restore(id, System.currentTimeMillis())
     }
 }
 

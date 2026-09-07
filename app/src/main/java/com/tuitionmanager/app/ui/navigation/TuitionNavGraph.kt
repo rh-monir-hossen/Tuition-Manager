@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.tuitionmanager.app.ui.agenda.*
 import com.tuitionmanager.app.ui.diary.*
+import com.tuitionmanager.app.ui.exam.*
 import com.tuitionmanager.app.ui.schedule.*
 import com.tuitionmanager.app.ui.student.*
 
@@ -50,6 +51,9 @@ fun TuitionNavGraph(
                 },
                 onClassHistoryClick = {
                     navController.navigate(Screen.ClassHistory.createRoute())
+                },
+                onExamsClick = {
+                    navController.navigate(Screen.ExamList.createRoute())
                 }
             )
         }
@@ -111,6 +115,18 @@ fun TuitionNavGraph(
                 },
                 onViewAllSessions = { studentId ->
                     navController.navigate(Screen.ClassHistory.createRoute(studentId = studentId))
+                },
+                onAddExam = { studentId ->
+                    navController.navigate(Screen.AddExam.createRoute(studentId = studentId))
+                },
+                onExamClick = { examId ->
+                    navController.navigate(Screen.ExamDetail.createRoute(examId = examId))
+                },
+                onEnterResultClick = { examId ->
+                    navController.navigate(Screen.EnterExamResult.createRoute(examId = examId))
+                },
+                onViewAllExams = { studentId ->
+                    navController.navigate(Screen.ExamList.createRoute(studentId = studentId))
                 }
             )
         }
@@ -331,6 +347,95 @@ fun TuitionNavGraph(
                 onNavigateToDiaryDetail = { diaryId ->
                     navController.navigate(Screen.DiaryDetail.createRoute(diaryId))
                 }
+            )
+        }
+
+        // 15. Exam List Screen (STEP 6)
+        composable(
+            route = Screen.ExamList.route,
+            arguments = listOf(
+                navArgument("studentId") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                    nullable = true
+                }
+            )
+        ) {
+            ExamListScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onExamClick = { examId ->
+                    navController.navigate(Screen.ExamDetail.createRoute(examId))
+                },
+                onAddExamClick = { studentId ->
+                    navController.navigate(Screen.AddExam.createRoute(studentId))
+                },
+                onEnterResultClick = { examId ->
+                    navController.navigate(Screen.EnterExamResult.createRoute(examId))
+                }
+            )
+        }
+
+        // 16. Add Exam Screen (STEP 6)
+        composable(
+            route = Screen.AddExam.route,
+            arguments = listOf(
+                navArgument("studentId") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                    nullable = true
+                }
+            )
+        ) {
+            ExamFormScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+        // 17. Edit Exam Screen (STEP 6)
+        composable(
+            route = Screen.EditExam.route,
+            arguments = listOf(
+                navArgument("examId") { type = NavType.StringType }
+            )
+        ) {
+            ExamFormScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+        // 18. Exam Detail Screen (STEP 6)
+        composable(
+            route = Screen.ExamDetail.route,
+            arguments = listOf(
+                navArgument("examId") { type = NavType.StringType }
+            )
+        ) {
+            ExamDetailScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onEditExamClick = { examId ->
+                    navController.navigate(Screen.EditExam.createRoute(examId))
+                },
+                onEnterResultClick = { examId ->
+                    navController.navigate(Screen.EnterExamResult.createRoute(examId))
+                },
+                onEditResultClick = { examId ->
+                    navController.navigate(Screen.EnterExamResult.createRoute(examId))
+                },
+                onStudentClick = { studentId ->
+                    navController.navigate(Screen.StudentProfile.createRoute(studentId))
+                }
+            )
+        }
+
+        // 19. Enter / Edit Exam Result Screen (STEP 6)
+        composable(
+            route = Screen.EnterExamResult.route,
+            arguments = listOf(
+                navArgument("examId") { type = NavType.StringType }
+            )
+        ) {
+            ExamResultFormScreen(
+                onNavigateBack = { navController.popBackStack() }
             )
         }
     }

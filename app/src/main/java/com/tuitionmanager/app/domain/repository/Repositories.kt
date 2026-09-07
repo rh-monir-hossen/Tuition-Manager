@@ -52,21 +52,38 @@ interface StudentDiaryRepository {
 }
 
 interface ExamRepository {
+    fun observeAllExams(): Flow<List<Exam>>
     fun observeExamsForStudent(studentId: String): Flow<List<Exam>>
     fun observeUpcomingExams(todayEpochMs: Long): Flow<List<Exam>>
     fun observeTodayExams(todayEpochMs: Long): Flow<List<Exam>>
     suspend fun getExamById(id: String): Exam?
+    fun observeExamById(id: String): Flow<Exam?>
     suspend fun planExam(exam: Exam)
     suspend fun updateExam(exam: Exam)
+    suspend fun updateStatus(id: String, status: ExamStatus)
     suspend fun cancelExam(id: String)
     suspend fun deleteExam(id: String)
+    suspend fun restoreExam(id: String)
+    fun filterAllExams(
+        studentId: String?,
+        subjectId: String?,
+        examType: ExamType?,
+        status: ExamStatus?,
+        startDateEpochMs: Long?,
+        endDateEpochMs: Long?
+    ): Flow<List<Exam>>
+    fun searchExams(studentId: String?, query: String): Flow<List<Exam>>
 
     // Result operations
     suspend fun getResultForExam(examId: String): ExamResult?
+    suspend fun getResultById(id: String): ExamResult?
     fun observeResultForExam(examId: String): Flow<ExamResult?>
     fun observeResultsForStudent(studentId: String): Flow<List<ExamResult>>
+    fun observeAllResults(): Flow<List<ExamResult>>
     suspend fun recordExamResult(result: ExamResult)
     suspend fun updateExamResult(result: ExamResult)
+    suspend fun deleteExamResult(id: String)
+    suspend fun restoreExamResult(id: String)
 }
 
 interface ClassSessionRepository {

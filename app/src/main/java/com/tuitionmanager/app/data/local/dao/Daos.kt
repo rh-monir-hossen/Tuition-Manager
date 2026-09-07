@@ -282,6 +282,9 @@ interface ExamDao {
     @Query("SELECT * FROM exams WHERE studentId = :studentId AND isDeleted = 0 ORDER BY plannedDate DESC")
     fun observeExamsForStudent(studentId: String): Flow<List<ExamEntity>>
 
+    @Query("SELECT * FROM exams WHERE isDeleted = 0 ORDER BY plannedDate DESC, plannedStartTimeMinutes DESC")
+    fun observeAllExams(): Flow<List<ExamEntity>>
+
     @Query("SELECT * FROM exams WHERE plannedDate >= :todayEpochMs AND status = 'PLANNED' AND isDeleted = 0 ORDER BY plannedDate ASC, plannedStartTimeMinutes ASC")
     fun observeUpcomingExams(todayEpochMs: Long): Flow<List<ExamEntity>>
 
@@ -290,6 +293,9 @@ interface ExamDao {
 
     @Query("SELECT * FROM exams WHERE id = :id AND isDeleted = 0")
     suspend fun getExamById(id: String): ExamEntity?
+
+    @Query("SELECT * FROM exams WHERE id = :id AND isDeleted = 0")
+    fun observeExamById(id: String): Flow<ExamEntity?>
 
     @Query("""
         SELECT * FROM exams 
@@ -309,6 +315,35 @@ interface ExamDao {
         endDateEpochMs: Long
     ): Flow<List<ExamEntity>>
 
+    @Query("""
+        SELECT * FROM exams 
+        WHERE (:studentId IS NULL OR studentId = :studentId)
+          AND (:subjectId IS NULL OR subjectId = :subjectId)
+          AND (:examType IS NULL OR examType = :examType)
+          AND (:status IS NULL OR status = :status)
+          AND (:startDateEpochMs IS NULL OR plannedDate >= :startDateEpochMs)
+          AND (:endDateEpochMs IS NULL OR plannedDate <= :endDateEpochMs)
+          AND isDeleted = 0 
+        ORDER BY plannedDate DESC, plannedStartTimeMinutes ASC
+    """)
+    fun filterAllExams(
+        studentId: String?,
+        subjectId: String?,
+        examType: String?,
+        status: String?,
+        startDateEpochMs: Long?,
+        endDateEpochMs: Long?
+    ): Flow<List<ExamEntity>>
+
+    @Query("""
+        SELECT * FROM exams
+        WHERE (:studentId IS NULL OR studentId = :studentId)
+          AND isDeleted = 0
+          AND (title LIKE '%' || :query || '%' OR syllabusTopic LIKE '%' || :query || '%' OR notes LIKE '%' || :query || '%')
+        ORDER BY plannedDate DESC
+    """)
+    fun searchExams(studentId: String?, query: String): Flow<List<ExamEntity>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(exam: ExamEntity)
 
@@ -320,6 +355,9 @@ interface ExamDao {
 
     @Query("UPDATE exams SET isDeleted = 1, deletedAt = :deletedAt, updatedAt = :deletedAt WHERE id = :id")
     suspend fun softDelete(id: String, deletedAt: Long)
+
+    @Query("UPDATE exams SET isDeleted = 0, deletedAt = NULL, updatedAt = :updatedAt WHERE id = :id")
+    suspend fun restore(id: String, updatedAt: Long)
 }
 
 @Dao
@@ -327,11 +365,17 @@ interface ExamResultDao {
     @Query("SELECT * FROM exam_results WHERE examId = :examId AND isDeleted = 0 LIMIT 1")
     suspend fun getResultForExam(examId: String): ExamResultEntity?
 
+    @Query("SELECT * FROM exam_results WHERE id = :id AND isDeleted = 0 LIMIT 1")
+    suspend fun getResultById(id: String): ExamResultEntity?
+
     @Query("SELECT * FROM exam_results WHERE examId = :examId AND isDeleted = 0 LIMIT 1")
     fun observeResultForExam(examId: String): Flow<ExamResultEntity?>
 
     @Query("SELECT * FROM exam_results WHERE studentId = :studentId AND isDeleted = 0 ORDER BY actualExamDate DESC")
     fun observeResultsForStudent(studentId: String): Flow<List<ExamResultEntity>>
+
+    @Query("SELECT * FROM exam_results WHERE isDeleted = 0 ORDER BY actualExamDate DESC")
+    fun observeAllResults(): Flow<List<ExamResultEntity>>
 
     @Query("""
         SELECT * FROM exam_results 
@@ -355,6 +399,9 @@ interface ExamResultDao {
 
     @Query("UPDATE exam_results SET isDeleted = 1, deletedAt = :deletedAt, updatedAt = :deletedAt WHERE id = :id")
     suspend fun softDelete(id: String, deletedAt: Long)
+
+    @Query("UPDATE exam_results SET isDeleted = 0, deletedAt = NULL, updatedAt = :updatedAt WHERE id = :id")
+    suspend fun restore(id: String, updatedAt: Long)
 }
 
 @Dao

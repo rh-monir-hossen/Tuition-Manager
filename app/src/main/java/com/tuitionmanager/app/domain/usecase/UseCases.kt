@@ -382,7 +382,9 @@ class PlanExamUseCase @Inject constructor(
             title = exam.title,
             totalMarks = exam.totalMarks,
             durationMinutes = exam.durationMinutes,
-            startTimeMinutes = exam.plannedStartTimeMinutes
+            startTimeMinutes = exam.plannedStartTimeMinutes,
+            passingMarks = exam.passingMarks,
+            plannedDate = exam.plannedDate
         )
         if (!validation.isValid) {
             return AppResult.Error((validation as ValidationResult.Invalid).errorMessage)
@@ -406,7 +408,9 @@ class UpdateExamUseCase @Inject constructor(
             title = exam.title,
             totalMarks = exam.totalMarks,
             durationMinutes = exam.durationMinutes,
-            startTimeMinutes = exam.plannedStartTimeMinutes
+            startTimeMinutes = exam.plannedStartTimeMinutes,
+            passingMarks = exam.passingMarks,
+            plannedDate = exam.plannedDate
         )
         if (!validation.isValid) {
             return AppResult.Error((validation as ValidationResult.Invalid).errorMessage)
@@ -446,6 +450,196 @@ class DeleteExamUseCase @Inject constructor(
     }
 }
 
+class RestoreExamUseCase @Inject constructor(
+    private val examRepository: ExamRepository
+) {
+    suspend operator fun invoke(id: String): AppResult<Unit> {
+        return try {
+            examRepository.restoreExam(id)
+            AppResult.Success(Unit)
+        } catch (e: Exception) {
+            AppResult.Error(e.message ?: "Failed to restore exam")
+        }
+    }
+}
+
+class GetExamByIdUseCase @Inject constructor(
+    private val examRepository: ExamRepository
+) {
+    suspend operator fun invoke(id: String): Exam? {
+        return examRepository.getExamById(id)
+    }
+}
+
+class ObserveExamByIdUseCase @Inject constructor(
+    private val examRepository: ExamRepository
+) {
+    operator fun invoke(id: String): Flow<Exam?> {
+        return examRepository.observeExamById(id)
+    }
+}
+
+class ObserveExamDetailsUseCase @Inject constructor(
+    private val examRepository: ExamRepository,
+    private val studentRepository: StudentRepository,
+    private val subjectRepository: StudentSubjectRepository,
+    private val evaluationEngine: ExamEvaluationEngine
+) {
+    operator fun invoke(examId: String): Flow<ExamWithDetails?> {
+        return examRepository.observeExamById(examId).combine(examRepository.observeResultForExam(examId)) { exam, result ->
+            if (exam == null) null
+            else {
+                val student = studentRepository.getStudentById(exam.studentId)
+                val subjects = subjectRepository.getSubjectsForStudent(exam.studentId)
+                val subject = subjects.firstOrNull { it.id == exam.subjectId }
+                val pct = result?.let {
+                    if (exam.totalMarks > 0) (it.marksObtained / exam.totalMarks) * 100.0 else 0.0
+                }
+                val grade = pct?.let { evaluationEngine.determineGradeLevel(it) }
+
+                ExamWithDetails(
+                    exam = exam,
+                    studentName = student?.name ?: "Unknown Student",
+                    studentGrade = student?.grade,
+                    subjectName = subject?.subjectName ?: "Tuition",
+                    dateFormatted = TimeUtils.formatLocalDate(exam.plannedDate),
+                    timeFormatted = TimeUtils.formatMinutesToTime(exam.plannedStartTimeMinutes),
+                    result = result,
+                    percentage = pct,
+                    gradeLevel = grade
+                )
+            }
+        }
+    }
+}
+
+class ObserveAllExamsUseCase @Inject constructor(
+    private val examRepository: ExamRepository,
+    private val studentRepository: StudentRepository,
+    private val subjectRepository: StudentSubjectRepository,
+    private val evaluationEngine: ExamEvaluationEngine
+) {
+    operator fun invoke(): Flow<List<ExamWithDetails>> {
+        return examRepository.observeAllExams().combine(examRepository.observeAllResults()) { exams, results ->
+            val resultMap = results.associateBy { it.examId }
+            exams.map { exam ->
+                val student = studentRepository.getStudentById(exam.studentId)
+                val subjects = subjectRepository.getSubjectsForStudent(exam.studentId)
+                val subject = subjects.firstOrNull { it.id == exam.subjectId }
+                val result = resultMap[exam.id]
+                val pct = result?.let {
+                    if (exam.totalMarks > 0) (it.marksObtained / exam.totalMarks) * 100.0 else 0.0
+                }
+                val grade = pct?.let { evaluationEngine.determineGradeLevel(it) }
+
+                ExamWithDetails(
+                    exam = exam,
+                    studentName = student?.name ?: "Student",
+                    studentGrade = student?.grade,
+                    subjectName = subject?.subjectName ?: "Tuition",
+                    dateFormatted = TimeUtils.formatLocalDate(exam.plannedDate),
+                    timeFormatted = TimeUtils.formatMinutesToTime(exam.plannedStartTimeMinutes),
+                    result = result,
+                    percentage = pct,
+                    gradeLevel = grade
+                )
+            }
+        }
+    }
+}
+
+class ObserveExamsForStudentUseCase @Inject constructor(
+    private val examRepository: ExamRepository,
+    private val studentRepository: StudentRepository,
+    private val subjectRepository: StudentSubjectRepository,
+    private val evaluationEngine: ExamEvaluationEngine
+) {
+    operator fun invoke(studentId: String): Flow<List<ExamWithDetails>> {
+        return examRepository.observeExamsForStudent(studentId).combine(examRepository.observeResultsForStudent(studentId)) { exams, results ->
+            val student = studentRepository.getStudentById(studentId)
+            val subjects = subjectRepository.getSubjectsForStudent(studentId)
+            val subjectMap = subjects.associateBy { it.id }
+            val resultMap = results.associateBy { it.examId }
+
+            exams.map { exam ->
+                val result = resultMap[exam.id]
+                val pct = result?.let {
+                    if (exam.totalMarks > 0) (it.marksObtained / exam.totalMarks) * 100.0 else 0.0
+                }
+                val grade = pct?.let { evaluationEngine.determineGradeLevel(it) }
+
+                ExamWithDetails(
+                    exam = exam,
+                    studentName = student?.name ?: "Student",
+                    studentGrade = student?.grade,
+                    subjectName = subjectMap[exam.subjectId]?.subjectName ?: "Tuition",
+                    dateFormatted = TimeUtils.formatLocalDate(exam.plannedDate),
+                    timeFormatted = TimeUtils.formatMinutesToTime(exam.plannedStartTimeMinutes),
+                    result = result,
+                    percentage = pct,
+                    gradeLevel = grade
+                )
+            }
+        }
+    }
+}
+
+class FilterExamsUseCase @Inject constructor(
+    private val examRepository: ExamRepository,
+    private val studentRepository: StudentRepository,
+    private val subjectRepository: StudentSubjectRepository,
+    private val evaluationEngine: ExamEvaluationEngine
+) {
+    operator fun invoke(
+        studentId: String?,
+        subjectId: String?,
+        examType: ExamType?,
+        status: ExamStatus?,
+        startDateEpochMs: Long?,
+        endDateEpochMs: Long?,
+        query: String?
+    ): Flow<List<ExamWithDetails>> {
+        val baseFlow = if (!query.isNullOrBlank()) {
+            examRepository.searchExams(studentId, query.trim())
+        } else {
+            examRepository.filterAllExams(
+                studentId = studentId,
+                subjectId = subjectId,
+                examType = examType,
+                status = status,
+                startDateEpochMs = startDateEpochMs,
+                endDateEpochMs = endDateEpochMs
+            )
+        }
+
+        return baseFlow.combine(examRepository.observeAllResults()) { exams, results ->
+            val resultMap = results.associateBy { it.examId }
+            exams.map { exam ->
+                val student = studentRepository.getStudentById(exam.studentId)
+                val subjects = subjectRepository.getSubjectsForStudent(exam.studentId)
+                val subject = subjects.firstOrNull { it.id == exam.subjectId }
+                val result = resultMap[exam.id]
+                val pct = result?.let {
+                    if (exam.totalMarks > 0) (it.marksObtained / exam.totalMarks) * 100.0 else 0.0
+                }
+                val grade = pct?.let { evaluationEngine.determineGradeLevel(it) }
+
+                ExamWithDetails(
+                    exam = exam,
+                    studentName = student?.name ?: "Student",
+                    studentGrade = student?.grade,
+                    subjectName = subject?.subjectName ?: "Tuition",
+                    dateFormatted = TimeUtils.formatLocalDate(exam.plannedDate),
+                    timeFormatted = TimeUtils.formatMinutesToTime(exam.plannedStartTimeMinutes),
+                    result = result,
+                    percentage = pct,
+                    gradeLevel = grade
+                )
+            }
+        }
+    }
+}
+
 class RecordExamResultUseCase @Inject constructor(
     private val examRepository: ExamRepository,
     private val evaluationEngine: ExamEvaluationEngine
@@ -470,11 +664,81 @@ class RecordExamResultUseCase @Inject constructor(
             passingMarks = exam.passingMarks
         )
 
+        val existingResult = examRepository.getResultForExam(result.examId)
+        val finalResult = if (existingResult != null) {
+            result.copy(
+                id = existingResult.id,
+                isPassed = isPassed,
+                createdAt = existingResult.createdAt,
+                updatedAt = System.currentTimeMillis()
+            )
+        } else {
+            result.copy(isPassed = isPassed)
+        }
+
         return try {
-            examRepository.recordExamResult(result.copy(isPassed = isPassed))
+            if (existingResult != null) {
+                examRepository.updateExamResult(finalResult)
+                examRepository.updateStatus(exam.id, ExamStatus.COMPLETED)
+            } else {
+                examRepository.recordExamResult(finalResult)
+            }
             AppResult.Success(Unit)
         } catch (e: Exception) {
             AppResult.Error(e.message ?: "Failed to record exam result")
+        }
+    }
+}
+
+class UpdateExamResultUseCase @Inject constructor(
+    private val examRepository: ExamRepository,
+    private val evaluationEngine: ExamEvaluationEngine
+) {
+    suspend operator fun invoke(result: ExamResult): AppResult<Unit> {
+        val exam = examRepository.getExamById(result.examId)
+            ?: return AppResult.Error("Associated exam event was not found")
+
+        val validation = ExamResultValidator.validate(
+            marksObtained = result.marksObtained,
+            totalMarks = exam.totalMarks,
+            actualExamDate = result.actualExamDate
+        )
+        if (!validation.isValid) {
+            return AppResult.Error((validation as ValidationResult.Invalid).errorMessage)
+        }
+
+        val isPassed = evaluationEngine.determineIsPassed(
+            marksObtained = result.marksObtained,
+            totalMarks = exam.totalMarks,
+            passingMarks = exam.passingMarks
+        )
+
+        return try {
+            examRepository.updateExamResult(result.copy(isPassed = isPassed, updatedAt = System.currentTimeMillis()))
+            AppResult.Success(Unit)
+        } catch (e: Exception) {
+            AppResult.Error(e.message ?: "Failed to update exam result")
+        }
+    }
+}
+
+class GetExamResultUseCase @Inject constructor(
+    private val examRepository: ExamRepository
+) {
+    suspend operator fun invoke(examId: String): ExamResult? {
+        return examRepository.getResultForExam(examId)
+    }
+}
+
+class DeleteExamResultUseCase @Inject constructor(
+    private val examRepository: ExamRepository
+) {
+    suspend operator fun invoke(resultId: String): AppResult<Unit> {
+        return try {
+            examRepository.deleteExamResult(resultId)
+            AppResult.Success(Unit)
+        } catch (e: Exception) {
+            AppResult.Error(e.message ?: "Failed to delete exam result")
         }
     }
 }

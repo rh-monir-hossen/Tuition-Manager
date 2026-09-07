@@ -57,6 +57,33 @@ sealed class Screen(val route: String) {
             return "class_history?studentId=$sParam"
         }
     }
+
+    // STEP 6: Exam & Exam Result Screens
+    object ExamList : Screen("exams?studentId={studentId}") {
+        fun createRoute(studentId: String? = null): String {
+            val sParam = studentId ?: ""
+            return "exams?studentId=$sParam"
+        }
+    }
+
+    object AddExam : Screen("exam/add?studentId={studentId}") {
+        fun createRoute(studentId: String? = null): String {
+            val sParam = studentId ?: ""
+            return "exam/add?studentId=$sParam"
+        }
+    }
+
+    object EditExam : Screen("exam/edit/{examId}") {
+        fun createRoute(examId: String) = "exam/edit/$examId"
+    }
+
+    object ExamDetail : Screen("exam/{examId}") {
+        fun createRoute(examId: String) = "exam/$examId"
+    }
+
+    object EnterExamResult : Screen("exam/{examId}/result") {
+        fun createRoute(examId: String) = "exam/$examId/result"
+    }
 }
 
 

@@ -202,3 +202,16 @@ data class ExamWithResult(
             }
         }
 }
+
+data class ExamWithDetails(
+    val exam: Exam,
+    val studentName: String,
+    val studentGrade: String?,
+    val subjectName: String,
+    val dateFormatted: String,
+    val timeFormatted: String,
+    val result: ExamResult? = null,
+    val percentage: Double? = null,
+    val gradeLevel: String? = null
+)
+

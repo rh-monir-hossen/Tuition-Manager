@@ -27,7 +27,9 @@ import com.tuitionmanager.app.domain.model.StudentDiary
 import com.tuitionmanager.app.domain.model.StudentUnderstanding
 import com.tuitionmanager.app.domain.model.ScheduleWithDetails
 import com.tuitionmanager.app.domain.model.ClassSessionWithDetails
+import com.tuitionmanager.app.domain.model.ExamWithDetails
 import com.tuitionmanager.app.ui.components.*
+import com.tuitionmanager.app.ui.exam.ExamCard
 import com.tuitionmanager.app.ui.schedule.SessionStatusChip
 import com.tuitionmanager.app.utils.TimeUtils
 
@@ -43,7 +45,11 @@ fun StudentProfileScreen(
     onAddSchedule: (String) -> Unit = {},
     onEditSchedule: (String) -> Unit = {},
     onSessionClick: (String) -> Unit = {},
-    onViewAllSessions: (String) -> Unit = {}
+    onViewAllSessions: (String) -> Unit = {},
+    onAddExam: (String) -> Unit = {},
+    onExamClick: (String) -> Unit = {},
+    onEnterResultClick: (String) -> Unit = {},
+    onViewAllExams: (String) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showDeleteConfirm by remember { mutableStateOf(false) }
@@ -160,6 +166,15 @@ fun StudentProfileScreen(
                             diaries = uiState.recentDiaries,
                             onAddDiary = { onAddDiary(student.id) },
                             onDiaryClick = onDiaryClick
+                        )
+                    }
+                    ProfileTab.EXAMS -> {
+                        StudentExamsTabContent(
+                            studentId = student.id,
+                            exams = uiState.exams,
+                            onAddExam = { onAddExam(student.id) },
+                            onExamClick = onExamClick,
+                            onEnterResultClick = onEnterResultClick
                         )
                     }
                     else -> {
@@ -945,6 +960,63 @@ private fun StudentClassesTabContent(
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun StudentExamsTabContent(
+    studentId: String,
+    exams: List<ExamWithDetails>,
+    onAddExam: () -> Unit,
+    onExamClick: (String) -> Unit,
+    onEnterResultClick: (String) -> Unit
+) {
+    if (exams.isEmpty()) {
+        EmptyStateView(
+            icon = Icons.Outlined.Assignment,
+            title = stringResource(R.string.student_exams_empty),
+            description = stringResource(R.string.empty_exams_desc),
+            actionButtonText = stringResource(R.string.action_add_exam),
+            onActionClick = onAddExam
+        )
+    } else {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Exams & Assessments (${exams.size})",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Button(
+                        onClick = onAddExam,
+                        shape = RoundedCornerShape(8.dp),
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
+                    ) {
+                        Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(text = stringResource(R.string.action_add_exam), style = MaterialTheme.typography.labelSmall)
+                    }
+                }
+            }
+            items(exams, key = { it.exam.id }) { examDetails ->
+                ExamCard(
+                    examDetails = examDetails,
+                    onClick = { onExamClick(examDetails.exam.id) },
+                    onEnterResultClick = if (examDetails.result == null) {
+                        { onEnterResultClick(examDetails.exam.id) }
+                    } else null
+                )
             }
         }
     }

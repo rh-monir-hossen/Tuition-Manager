@@ -21,6 +21,20 @@ enum class ProfileTab {
     NOTES
 }
 
+private data class StudentDataGroup(
+    val student: Student?,
+    val stats: StudentStats,
+    val subjects: List<StudentSubject>,
+    val diaries: List<StudentDiary>
+)
+
+private data class ActivityDataGroup(
+    val schedules: List<ScheduleWithDetails>,
+    val sessions: List<ClassSessionWithDetails>,
+    val exams: List<ExamWithDetails>,
+    val tab: ProfileTab
+)
+
 data class StudentProfileUiState(
     val isLoading: Boolean = true,
     val student: Student? = null,
@@ -29,6 +43,7 @@ data class StudentProfileUiState(
     val recentDiaries: List<StudentDiary> = emptyList(),
     val schedules: List<ScheduleWithDetails> = emptyList(),
     val sessions: List<ClassSessionWithDetails> = emptyList(),
+    val exams: List<ExamWithDetails> = emptyList(),
     val selectedTab: ProfileTab = ProfileTab.OVERVIEW,
     val error: String? = null
 )
@@ -41,6 +56,7 @@ class StudentProfileViewModel @Inject constructor(
     private val observeDiaryHistoryUseCase: ObserveDiaryHistoryUseCase,
     private val observeSchedulesForStudentUseCase: ObserveSchedulesForStudentUseCase,
     private val observeSessionsForStudentUseCase: ObserveSessionsForStudentUseCase,
+    private val observeExamsForStudentUseCase: ObserveExamsForStudentUseCase,
     private val toggleStudentActiveUseCase: ToggleStudentActiveUseCase,
     private val deleteStudentUseCase: DeleteStudentUseCase,
     savedStateHandle: SavedStateHandle
@@ -50,14 +66,23 @@ class StudentProfileViewModel @Inject constructor(
     private val _selectedTab = MutableStateFlow(ProfileTab.OVERVIEW)
 
     val uiState: StateFlow<StudentProfileUiState> = combine(
-        observeStudentByIdUseCase(studentId),
-        getStudentStatsUseCase(studentId),
-        observeSubjectsForStudentUseCase(studentId),
-        observeDiaryHistoryUseCase(studentId),
-        observeSchedulesForStudentUseCase(studentId),
-        observeSessionsForStudentUseCase(studentId),
-        _selectedTab
-    ) { student, stats, subjects, diaries, schedules, sessions, tab ->
+        combine(
+            observeStudentByIdUseCase(studentId),
+            getStudentStatsUseCase(studentId),
+            observeSubjectsForStudentUseCase(studentId),
+            observeDiaryHistoryUseCase(studentId)
+        ) { student, stats, subjects, diaries ->
+            StudentDataGroup(student, stats, subjects, diaries)
+        },
+        combine(
+            observeSchedulesForStudentUseCase(studentId),
+            observeSessionsForStudentUseCase(studentId),
+            observeExamsForStudentUseCase(studentId),
+            _selectedTab
+        ) { schedules, sessions, exams, tab ->
+            ActivityDataGroup(schedules, sessions, exams, tab)
+        }
+    ) { (student, stats, subjects, diaries), (schedules, sessions, exams, tab) ->
         StudentProfileUiState(
             isLoading = false,
             student = student,
@@ -66,6 +91,7 @@ class StudentProfileViewModel @Inject constructor(
             recentDiaries = diaries.take(10),
             schedules = schedules,
             sessions = sessions,
+            exams = exams,
             selectedTab = tab,
             error = if (student == null) "Student not found" else null
         )

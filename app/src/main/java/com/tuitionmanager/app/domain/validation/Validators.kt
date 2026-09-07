@@ -40,14 +40,20 @@ object ExamValidator {
         title: String,
         totalMarks: Double,
         durationMinutes: Int,
-        startTimeMinutes: Int
+        startTimeMinutes: Int,
+        passingMarks: Double? = null,
+        plannedDate: Long = 1L
     ): ValidationResult {
         if (studentId.isBlank()) return ValidationResult.Invalid("Student reference is required")
         if (subjectId.isBlank()) return ValidationResult.Invalid("Subject reference is required")
         if (title.trim().isEmpty()) return ValidationResult.Invalid("Exam title cannot be empty")
         if (totalMarks <= 0.0) return ValidationResult.Invalid("Total marks must be greater than 0")
+        if (passingMarks != null && (passingMarks < 0.0 || passingMarks > totalMarks)) {
+            return ValidationResult.Invalid("Passing marks must be between 0 and total marks ($totalMarks)")
+        }
         if (durationMinutes <= 0) return ValidationResult.Invalid("Duration must be greater than 0 minutes")
         if (startTimeMinutes !in 0..1439) return ValidationResult.Invalid("Start time minutes must be between 0 and 1439")
+        if (plannedDate <= 0L) return ValidationResult.Invalid("Valid planned date is required")
         return ValidationResult.Valid
     }
 }
